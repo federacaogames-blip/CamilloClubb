@@ -3,13 +3,9 @@ const API_KEY_PINNACLE = '080ec70363mshf4bb5ff3cd88babp14b3d4jsn05e5bd4a7e31'; /
 const API_HOST_PINNACLE = 'pinnacle-odds.p.rapidapi.com';
 const BASE_URL_PINNACLE = 'https://pinnacle-odds.p.rapidapi.com';
 
-// --- CONFIGURAÇÕES DAS NOVAS APIs ---
-
-// 1. API DE FUTEBOL (wosti-futebol-tv-brasil)
+// --- CONFIGURAÇÕES DAS NOVAS APIs (Mantidas, mas sem chamada automática) ---
 const API_HOST_FUTEBOL = 'wosti-futebol-tv-brasil.p.rapidapi.com';
 const BASE_URL_FUTEBOL = 'https://wosti-futebol-tv-brasil.p.rapidapi.com';
-
-// 2. API DA NBA (api-nba-v1)
 const API_HOST_NBA = 'api-nba-v1.p.rapidapi.com';
 const BASE_URL_NBA = 'https://api-nba-v1.p.rapidapi.com';
 
@@ -38,57 +34,36 @@ async function fetchFromAPI(host, endpoint, baseUrl, key) {
     }
 }
 
-// --- NOVAS FUNÇÕES DE CHAMADA DA API ---
+// --- FUNÇÕES DE CHAMADA DAS NOVAS APIs (APENAS PARA USO FUTURO) ---
 
-/**
- * Chama a API de Futebol do Brasil para obter dados de Times.
- * Exibe o resultado no console.
- */
 async function buscarTimesDeFutebol() {
     console.log("-> Buscando Times de Futebol (Wosti)...");
     const endpoint = "/api/Teams";
-
-    const dados = await fetchFromAPI(
-        API_HOST_FUTEBOL, 
-        endpoint, 
-        BASE_URL_FUTEBOL, 
-        API_KEY_PINNACLE // Usando a mesma chave fornecida
-    );
-
+    const dados = await fetchFromAPI(API_HOST_FUTEBOL, endpoint, BASE_URL_FUTEBOL, API_KEY_PINNACLE);
     if (!dados.error) {
         console.log("✅ Dados de Times de Futebol Recebidos:", dados);
-        // FUTURO: Aqui você adicionaria a lógica para mostrar os times no HTML
     }
 }
 
-/**
- * Chama a API da NBA para obter estatísticas de jogadores em um jogo específico.
- * Exibe o resultado no console.
- */
 async function buscarEstatisticasNBA() {
     console.log("-> Buscando Estatísticas da NBA (API-NBA-V1)...");
-    // O jogo 8133 é um exemplo que você forneceu.
     const endpoint = "/players/statistics?game=8133"; 
-
-    const dados = await fetchFromAPI(
-        API_HOST_NBA, 
-        endpoint, 
-        BASE_URL_NBA, 
-        API_KEY_PINNACLE // Usando a mesma chave fornecida
-    );
-
+    const dados = await fetchFromAPI(API_HOST_NBA, endpoint, BASE_URL_NBA, API_KEY_PINNACLE);
     if (!dados.error) {
         console.log("✅ Estatísticas da NBA Recebidas:", dados);
-        // FUTURO: Aqui você adicionaria a lógica para criar o card de basquete no HTML
     }
 }
 
 
-// --- FUNÇÕES DE PINNACLE E FALLBACK (MANTIDAS IGUAIS, MAS USANDO NOVAS CONSTANTES) ---
+// --- FUNÇÃO DE CARREGAMENTO DE FALLBACK (JOGOS FICTÍCIOS) ---
 
 function carregarFallback() {
      const jogosLista = document.getElementById('jogosLista');
+     // **APARECE QUANDO A COTA DA API ACABA**
      jogosLista.innerHTML = `
+        <p style="text-align:center; color:#ff5555; font-size: 1.2rem; margin-top: 20px;">
+            ⚠️ **ERRO DE CONEXÃO/COTA DA API.** <br> Exibindo dados de simulação.
+        </p>
         <div class="jogo-card" style="animation-delay: 0s;">
             <div class="info">
                 <strong>Palmeiras</strong> × <strong>Fluminense</strong><br>
@@ -116,14 +91,16 @@ function carregarFallback() {
     document.getElementById('oddDiaOdd').textContent = '3.85';
     document.getElementById('oddDiaDesc').textContent = 'Vitória do City + Mais de 2.5 gols';
     
-    console.warn("Usando dados de Fallback devido a erro na API.");
+    console.warn("Usando dados de Fallback devido a erro na API ou cota esgotada.");
 }
 
+// --- FUNÇÃO PRINCIPAL DE CARREGAMENTO DE JOGOS (PINNACLE) ---
+
 async function carregarJogos() {
-    // Código da Pinnacle mantido, usando as novas constantes de PINNACLE
     const jogosLista = document.getElementById('jogosLista');
     jogosLista.innerHTML = '<div class="loading"><div class="spinner"></div><p>Carregando odds reais da Pinnacle...</p></div>';
 
+    // Se a API falhar ou a cota acabar, ele chama o carregarFallback()
     const metaPeriods = await fetchFromAPI(API_HOST_PINNACLE, '/kit/v1/meta-periods?sport_id=1', BASE_URL_PINNACLE, API_KEY_PINNACLE);
     if (metaPeriods && metaPeriods.error) { 
         carregarFallback();
@@ -135,7 +112,8 @@ async function carregarJogos() {
         carregarFallback();
         return;
     }
-
+    
+    // ... (restante da lógica de carregamento dos cards de jogo)
     let jogosHTML = '';
     let oddDia = { jogo: '', odd: 'N/A', desc: '' };
     let count = 0;
@@ -264,10 +242,8 @@ function mostrarConteudoVip(estaLogado) {
 
 // 4. Carrega tudo ao iniciar
 document.addEventListener('DOMContentLoaded', () => {
-    // Chamadas da API Pinnacle e das novas APIs
+    // Apenas a chamada de Odds da Pinnacle é feita aqui para economizar cota.
     carregarJogos(); 
-    buscarTimesDeFutebol(); // Chamada da nova API de Futebol
-    buscarEstatisticasNBA();  // Chamada da nova API da NBA
 
     // Lógica VIP
     mostrarConteudoVip(false); 
