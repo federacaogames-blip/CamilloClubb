@@ -1,84 +1,279 @@
-// --- CONFIGURAÇÃO DA API DA PINNACLE (JÁ EXISTENTE) ---
-const API_KEY_PINNACLE = '080ec70363mshf4bb5ff3cd88babp14b3d4jsn05e5bd4a7e31'; // SUA CHAVE
-const API_HOST_PINNACLE = 'pinnacle-odds.p.rapidapi.com';
-const BASE_URL_PINNACLE = 'https://pinnacle-odds.p.rapidapi.com';
+// --- CONFIGURAÇÃO DA API DE FUTEBOL VIRTUAL (NOVA) ---
+const API_HOST_FUTEBOL = 'futebol-virtual-bet3651.p.rapidapi.com';
+const BASE_URL_FUTEBOL = 'https://futebol-virtual-bet3651.p.rapidapi.com';
 
-// --- CONFIGURAÇÕES DAS NOVAS APIs (Chaves mantidas, mas sem chamada automática) ---
-const API_HOST_FUTEBOL = 'wosti-futebol-tv-brasil.p.rapidapi.com';
-const BASE_URL_FUTEBOL = 'https://wosti-futebol-tv-brasil.p.rapidapi.com';
-const API_HOST_NBA = 'api-nba-v1.p.rapidapi.com';
-const BASE_URL_NBA = 'https://api-nba-v1.p.rapidapi.com';
+// --- CONFIGURAÇÃO DA API DA NBA FREE DATA (NOVA) ---
+const API_HOST_NBA = 'nba-api-free-data.p.rapidapi.com';
+const BASE_URL_NBA = 'https://nba-api-free-data.p.rapidapi.com';
 
-// Exemplo de usuário/senha VIP (DEVE SER MUDADO PARA SEGURANÇA REAL)
+// Sua chave de API atual (USADA PARA TODAS)
+const API_KEY = '080ec70363mshf4bb5ff3cd88babp14b3d4jsn05e5bd4a7e31'; 
+
+// Exemplo de usuário/senha VIP
 const VIP_USER = 'camillovip';
 const VIP_PASS = 'melhoresodds2025'; 
 
-// --- FUNÇÃO CENTRAL DE FETCH ---
-async function fetchFromAPI(host, endpoint, baseUrl, key) {
+// --- FUNÇÃO CENTRAL DE FETCH (AGORA SUPORTA MÉTODO POST) ---
+async function fetchFromAPI(host, endpoint, baseUrl, key, method = 'GET', body = null) {
+    const headers = {
+        'X-Rapidapi-Key': key,
+        'X-Rapidapi-Host': host,
+    };
+    
+    if (method === 'POST' && body) {
+        headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    }
+
     try {
         const response = await fetch(`${baseUrl}${endpoint}`, {
-            method: 'GET',
-            headers: {
-                'X-Rapidapi-Key': key,
-                'X-Rapidapi-Host': host,
-            }
+            method: method,
+            headers: headers,
+            body: body 
         });
+        
         if (!response.ok) {
             const errorText = await response.text();
             throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}...`);
         }
-        return await response.json();
+        
+        // Tentativa de parsear JSON, mas algumas APIs POST podem retornar texto simples
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            return await response.json();
+        } else {
+            return await response.text();
+        }
+
     } catch (error) {
-        console.error(`Erro na API (${host}):`, error);
+        console.error(`Erro na API (${host} - ${method}):`, error);
         return { error: true, message: error.message }; 
     }
 }
 
-// --- FUNÇÃO DE CARREGAMENTO DE FALLBACK (Mostra o erro de cota/conexão) ---
+// --- FUNÇÃO DE CARREGAMENTO DE JOGOS E ODDS (FICTÍCIAS/PALPITES) ---
+
+function carregarJogosFicticios() {
+    const jogosLista = document.getElementById('jogosLista');
+    
+    const jogosFicticios = [
+        { home: 'Arsenal', away: 'Tottenham', liga: 'Premier League', oddH: 1.80, oddD: 3.50, oddA: 4.10, date: '03/12 17:00' },
+        { home: 'Real Madrid', away: 'Barcelona', liga: 'La Liga', oddH: 2.10, oddD: 3.40, oddA: 3.00, date: '04/12 16:30' },
+        { home: 'Flamengo', away: 'Palmeiras', liga: 'Brasileirão', oddH: 2.30, oddD: 3.20, oddA: 2.80, date: '05/12 21:30' },
+        { home: 'Bayern', away: 'Dortmund', liga: 'Bundesliga', oddH: 1.50, oddD: 4.50, oddA: 5.50, date: '06/12 14:00' },
+    ];
+
+    let jogosHTML = '';
+    let oddDia = { jogo: 'Arsenal × Tottenham', odd: '1.80', desc: 'Vitória Simples do Arsenal (Palpite)' };
+    
+    jogosFicticios.forEach((jogo, index) => {
+        const card = `
+        <div class="jogo-card" style="animation-delay: ${index * 0.1}s;">
+            <div class="info">
+                <strong>${jogo.home}</strong> × <strong>${jogo.away}</strong><br>
+                <small>${jogo.liga} - ${jogo.date} (PALPITE)</small>
+            </div>
+            <div class="odds">
+                <span title="Vitória ${jogo.home}">${jogo.oddH}</span>
+                <span title="Empate">${jogo.oddD}</span>
+                <span title="Vitória ${jogo.away}">${jogo.oddA}</span>
+            </div>
+        </div>`;
+        jogosHTML += card;
+    });
+
+    jogosLista.innerHTML = jogosHTML;
+    document.getElementById('oddDiaJogo').textContent = oddDia.jogo;
+    document.getElementById('oddDiaOdd').textContent = oddDia.odd;
+    document.getElementById('oddDiaDesc').textContent = oddDia.desc;
+}
+
+// --- INTEGRAÇÃO DA NOVA API DE FUTEBOL (VIRTUAL BET365) ---
+
+async function buscarEstatisticasFutebol() {
+    console.log("-> Buscando Estatísticas de Futebol (Virtual Bet365)...");
+    const endpoint = "/last-updated"; 
+
+    // Tentamos fazer a chamada POST, mas sem corpo, conforme sua instrução
+    const dados = await fetchFromAPI(
+        API_HOST_FUTEBOL, 
+        endpoint, 
+        BASE_URL_FUTEBOL, 
+        API_KEY,
+        'POST' // USANDO O MÉTODO POST CONFORME SUA REQUISIÇÃO
+    );
+
+    const estatisticasDadosDiv = document.getElementById('estatisticas-dados');
+    const estatisticasTimeSmall = document.getElementById('estatisticas-time');
+    
+    if (dados && !dados.error) {
+        // Se retornar JSON, tentamos extrair dados
+        if (typeof dados === 'object' && dados.time) {
+            estatisticasTimeSmall.textContent = `Última Atualização (API): ${dados.time}`; 
+            estatisticasDadosDiv.innerHTML = `
+                <div class="stat-item"><span>Status API</span> <strong>✅ Conectado</strong></div>
+                <div class="stat-item"><span>Hora do Servidor</span> <strong>${dados.time}</strong></div>
+            `;
+        } 
+        // Se retornar texto simples, mostramos o texto (pode ser o placar)
+        else if (typeof dados === 'string') {
+             estatisticasTimeSmall.textContent = `Dados de Texto Recebidos`; 
+             estatisticasDadosDiv.innerHTML = `
+                <div class="stat-item"><span>Status API</span> <strong>✅ Conectado (Texto)</strong></div>
+                <div class="stat-item"><span>Retorno</span> <strong>${dados.substring(0, 50)}...</strong></div>
+            `;
+        }
+        else {
+             // Caso a resposta não seja útil
+             estatisticasTimeSmall.textContent = `Futebol API: Sucesso, mas dados vazios`;
+             estatisticasDadosDiv.innerHTML = `<div class="stat-item"><span>Status</span> <strong>✅ Conexão OK</strong></div>`;
+        }
+
+        console.log("✅ Dados da API de Futebol Recebidos.", dados);
+    } else {
+        estatisticasTimeSmall.textContent = `Futebol API: Offline`;
+        estatisticasDadosDiv.innerHTML = `<div class="stat-item"><span>Status</span> <strong>❌ Cota/Erro</strong></div>`;
+        console.warn("API Futebol Virtual falhou. Cota esgotada ou sem dados.");
+    }
+}
+
+// --- INTEGRAÇÃO DA NOVA API DA NBA (FREE DATA) ---
+
+async function buscarEstatisticasNBA() {
+    console.log("-> Buscando Estatísticas da NBA (Free Data)...");
+    const endpoint = "/nba-atlantic-team-list"; 
+    
+    const dados = await fetchFromAPI(
+        API_HOST_NBA, 
+        endpoint, 
+        BASE_URL_NBA, 
+        API_KEY,
+        'GET' // USANDO O MÉTODO GET CONFORME SUA REQUISIÇÃO
+    );
+    
+    const mainContentWrapper = document.getElementById('main-content-wrapper');
+
+    if (dados && !dados.error && dados.teams && dados.teams.length > 0) {
+        // Exemplo: Listando o primeiro time da Divisão Atlantic
+        const primeiroTime = dados.teams[0];
+
+        const nbaSectionHTML = `
+            <section id="nba-stats" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
+                <h2>🏀 Times da Divisão Atlantic (NBA)</h2>
+                <div class="highlight-card">
+                    <h3>Primeiro Time Listado</h3>
+                    <p>Nome: <strong>${primeiroTime.name}</strong></p>
+                    <p>Cidade: <strong>${primeiroTime.city}</strong></p>
+                    <small>Dados fornecidos pela NBA-API-Free-Data.</small>
+                </div>
+            </section>
+        `;
+        mainContentWrapper.insertAdjacentHTML('beforeend', nbaSectionHTML);
+        console.log("✅ Dados da NBA Recebidos e Exibidos.");
+    } else {
+        const nbaErrorHTML = `
+            <section id="nba-stats" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
+                <h2>🏀 Destaques da NBA</h2>
+                <p style="color: #ff5555; text-align: center;">Não foi possível carregar os dados da NBA. Cota esgotada ou erro de conexão.</p>
+            </section>
+        `;
+        mainContentWrapper.insertAdjacentHTML('beforeend', nbaErrorHTML);
+        console.warn("API NBA Free Data falhou. Cota esgotada ou sem dados.");
+    }
+}
+
+
+// --- FUNÇÃO DE CARREGAMENTO DE FALLBACK (NÃO É MAIS NECESSÁRIA, MAS MANTIDA POR SEGURANÇA) ---
 
 function carregarFallback() {
      const jogosLista = document.getElementById('jogosLista');
-     
-     // Conteúdo de erro de cota
-     jogosLista.innerHTML = `
-        <div style="text-align:center; padding: 50px 0;">
-            <i class="fas fa-exclamation-triangle" style="color: #ff5555; font-size: 3rem; margin-bottom: 15px;"></i>
-            <p style="color:#ff5555; font-size: 1.2rem; margin-top: 20px; font-weight: 600;">
-                ⚠️ **ERRO NA API.** <br>
-                Não foi possível carregar as odds ao vivo. <br>
-                O limite de requisições gratuitas pode ter sido esgotado.
-            </p>
-        </div>`;
-    
-    // Zera os dados de Odd do Dia
-    document.getElementById('oddDiaJogo').textContent = 'Erro de Conexão';
-    document.getElementById('oddDiaOdd').textContent = '0.00';
-    document.getElementById('oddDiaDesc').textContent = 'Tente recarregar mais tarde.';
-    
-    console.warn("Usando fallback: API falhou ou cota esgotada.");
+     jogosLista.innerHTML = '<p style="text-align:center; color:#aaa;">Nenhum jogo encontrado para hoje (Palpites não carregados).</p>';
+     // A Odd do Dia será carregada pela função carregarJogosFicticios()
 }
 
-// --- FUNÇÃO PRINCIPAL DE CARREGAMENTO DE JOGOS (PINNACLE) ---
 
-async function carregarJogos() {
-    const jogosLista = document.getElementById('jogosLista');
-    jogosLista.innerHTML = '<div class="loading"><div class="spinner"></div><p>Carregando odds reais da Pinnacle...</p></div>';
+// --- LÓGICA VIP (MANTIDA IGUAL) ---
+const navVipLink = document.getElementById('nav-vip-link');
+const loginSection = document.getElementById('login-vip');
+const conteudoPadrao = document.getElementById('conteudo-padrao');
+const conteudoVip = document.getElementById('conteudo-vip');
+const loginForm = document.getElementById('loginForm');
+const loginErro = document.getElementById('loginErro');
+const logoutBtn = document.getElementById('logoutBtn');
 
-    // Se a API falhar ou a cota acabar, ele cai no carregarFallback()
-    const metaPeriods = await fetchFromAPI(API_HOST_PINNACLE, '/kit/v1/meta-periods?sport_id=1', BASE_URL_PINNACLE, API_KEY_PINNACLE);
-    if (metaPeriods && metaPeriods.error) { 
-        carregarFallback();
-        return;
+// ... (Restante da lógica VIP omitida por brevidade, mantendo-se a mesma) ...
+navVipLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (sessionStorage.getItem('isLoggedIn') === 'true') {
+        mostrarConteudoVip(true);
+    } else {
+        mostrarConteudoVip(false);
+        loginSection.style.display = 'block';
+        conteudoPadrao.style.display = 'none';
     }
+    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+    navVipLink.classList.add('active');
+});
 
-    const oddsData = await fetchFromAPI(API_HOST_PINNACLE, '/kit/v1/odds?sport_id=1&period_number=1&odds_format=decimal&lang=en&date_format=iso', BASE_URL_PINNACLE, API_KEY_PINNACLE);
-    if (oddsData && oddsData.error || !oddsData?.leagues?.length) { 
-        carregarFallback();
-        return;
+loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const user = document.getElementById('username').value;
+    const pass = document.getElementById('password').value;
+
+    if (user === VIP_USER && pass === VIP_PASS) {
+        sessionStorage.setItem('isLoggedIn', 'true');
+        loginErro.style.display = 'none';
+        mostrarConteudoVip(true);
+    } else {
+        loginErro.style.display = 'block';
     }
+});
+
+logoutBtn.addEventListener('click', () => {
+    sessionStorage.removeItem('isLoggedIn');
+    mostrarConteudoVip(false);
+    loginSection.style.display = 'block';
+    conteudoVip.style.display = 'none';
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+});
+
+function mostrarConteudoVip(estaLogado) {
+    loginSection.style.display = 'none';
+    conteudoVip.style.display = 'none';
+    conteudoPadrao.style.display = 'none';
     
-    let jogosHTML = '';
-    let oddDia = { jogo: '', odd: 'N/A', desc: '' };
-    let count = 0;
+    if (estaLogado) {
+        conteudoVip.style.display = 'flex';
+    } else {
+        conteudoPadrao.style.display = 'block';
+        navVipLink.classList.remove('active');
+        const primeiroLink = document.querySelector('nav a:first-child');
+        if (primeiroLink) {
+             primeiroLink.classList.add('active');
+        }
+    }
+}
 
-    oddsData.
+// 4. Carrega tudo ao iniciar (NOVO FOCO: JOGOS FICTÍCIOS + ESTATÍSTICAS REAIS)
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Odds/Palpites Fictícios (Substitui a Pinnacle)
+    carregarJogosFicticios(); 
+
+    // 2. Estatísticas de Futebol (Nova API: Futebol Virtual Bet365)
+    buscarEstatisticasFutebol(); 
+    
+    // 3. Estatísticas de Basquete (Nova API: NBA Free Data)
+    buscarEstatisticasNBA();
+
+    // Lógica VIP
+    mostrarConteudoVip(false); 
+
+    if (sessionStorage.getItem('isLoggedIn') === 'true') {
+         mostrarConteudoVip(true); 
+         navVipLink.classList.add('active');
+         const primeiroLink = document.querySelector('nav a:first-child');
+         if (primeiroLink) {
+             primeiroLink.classList.remove('active');
+         }
+    }
+});
