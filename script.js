@@ -1,21 +1,30 @@
-// --- CONFIGURAÇÃO DA API ---
-const API_KEY = '080ec70363mshf4bb5ff3cd88babp14b3d4jsn05e5bd4a7e31'; // SUA CHAVE
-const API_HOST = 'pinnacle-odds.p.rapidapi.com';
-const BASE_URL = 'https://pinnacle-odds.p.rapidapi.com';
+// --- CONFIGURAÇÃO DA API DA PINNACLE (JÁ EXISTENTE) ---
+const API_KEY_PINNACLE = '080ec70363mshf4bb5ff3cd88babp14b3d4jsn05e5bd4a7e31'; // SUA CHAVE
+const API_HOST_PINNACLE = 'pinnacle-odds.p.rapidapi.com';
+const BASE_URL_PINNACLE = 'https://pinnacle-odds.p.rapidapi.com';
+
+// --- CONFIGURAÇÕES DAS NOVAS APIs ---
+
+// 1. API DE FUTEBOL (wosti-futebol-tv-brasil)
+const API_HOST_FUTEBOL = 'wosti-futebol-tv-brasil.p.rapidapi.com';
+const BASE_URL_FUTEBOL = 'https://wosti-futebol-tv-brasil.p.rapidapi.com';
+
+// 2. API DA NBA (api-nba-v1)
+const API_HOST_NBA = 'api-nba-v1.p.rapidapi.com';
+const BASE_URL_NBA = 'https://api-nba-v1.p.rapidapi.com';
 
 // Exemplo de usuário/senha VIP (DEVE SER MUDADO PARA SEGURANÇA REAL)
 const VIP_USER = 'camillovip';
 const VIP_PASS = 'melhoresodds2025'; 
 
-// --- FUNÇÃO CENTRAL DE FETCH DA API ---
-async function fetchFromAPI(endpoint, options = {}) {
+// --- FUNÇÃO CENTRAL DE FETCH (AGORA GENÉRICA) ---
+async function fetchFromAPI(host, endpoint, baseUrl, key) {
     try {
-        const response = await fetch(`${BASE_URL}${endpoint}`, {
+        const response = await fetch(`${baseUrl}${endpoint}`, {
             method: 'GET',
             headers: {
-                'X-Rapidapi-Key': API_KEY,
-                'X-Rapidapi-Host': API_HOST,
-                ...options.headers
+                'X-Rapidapi-Key': key,
+                'X-Rapidapi-Host': host,
             }
         });
         if (!response.ok) {
@@ -24,12 +33,59 @@ async function fetchFromAPI(endpoint, options = {}) {
         }
         return await response.json();
     } catch (error) {
-        console.error('Erro na API:', error);
+        console.error(`Erro na API (${host}):`, error);
         return { error: true, message: error.message }; 
     }
 }
 
-// --- FUNÇÃO DE CARREGAMENTO DE FALLBACK (DADOS MOCADOS) ---
+// --- NOVAS FUNÇÕES DE CHAMADA DA API ---
+
+/**
+ * Chama a API de Futebol do Brasil para obter dados de Times.
+ * Exibe o resultado no console.
+ */
+async function buscarTimesDeFutebol() {
+    console.log("-> Buscando Times de Futebol (Wosti)...");
+    const endpoint = "/api/Teams";
+
+    const dados = await fetchFromAPI(
+        API_HOST_FUTEBOL, 
+        endpoint, 
+        BASE_URL_FUTEBOL, 
+        API_KEY_PINNACLE // Usando a mesma chave fornecida
+    );
+
+    if (!dados.error) {
+        console.log("✅ Dados de Times de Futebol Recebidos:", dados);
+        // FUTURO: Aqui você adicionaria a lógica para mostrar os times no HTML
+    }
+}
+
+/**
+ * Chama a API da NBA para obter estatísticas de jogadores em um jogo específico.
+ * Exibe o resultado no console.
+ */
+async function buscarEstatisticasNBA() {
+    console.log("-> Buscando Estatísticas da NBA (API-NBA-V1)...");
+    // O jogo 8133 é um exemplo que você forneceu.
+    const endpoint = "/players/statistics?game=8133"; 
+
+    const dados = await fetchFromAPI(
+        API_HOST_NBA, 
+        endpoint, 
+        BASE_URL_NBA, 
+        API_KEY_PINNACLE // Usando a mesma chave fornecida
+    );
+
+    if (!dados.error) {
+        console.log("✅ Estatísticas da NBA Recebidas:", dados);
+        // FUTURO: Aqui você adicionaria a lógica para criar o card de basquete no HTML
+    }
+}
+
+
+// --- FUNÇÕES DE PINNACLE E FALLBACK (MANTIDAS IGUAIS, MAS USANDO NOVAS CONSTANTES) ---
+
 function carregarFallback() {
      const jogosLista = document.getElementById('jogosLista');
      jogosLista.innerHTML = `
@@ -63,20 +119,18 @@ function carregarFallback() {
     console.warn("Usando dados de Fallback devido a erro na API.");
 }
 
-// --- FUNÇÃO PRINCIPAL DE CARREGAMENTO DE JOGOS ---
 async function carregarJogos() {
+    // Código da Pinnacle mantido, usando as novas constantes de PINNACLE
     const jogosLista = document.getElementById('jogosLista');
-    jogosLista.innerHTML = '<div class="loading"><div class="spinner"></div><p>Carregando jogos...</p></div>';
+    jogosLista.innerHTML = '<div class="loading"><div class="spinner"></div><p>Carregando odds reais da Pinnacle...</p></div>';
 
-    // Chama a API para pegar o meta-periods (necessário para a próxima chamada)
-    const metaPeriods = await fetchFromAPI('/kit/v1/meta-periods?sport_id=1');
+    const metaPeriods = await fetchFromAPI(API_HOST_PINNACLE, '/kit/v1/meta-periods?sport_id=1', BASE_URL_PINNACLE, API_KEY_PINNACLE);
     if (metaPeriods && metaPeriods.error) { 
         carregarFallback();
         return;
     }
 
-    // Chama a API para pegar as odds
-    const oddsData = await fetchFromAPI('/kit/v1/odds?sport_id=1&period_number=1&odds_format=decimal&lang=en&date_format=iso');
+    const oddsData = await fetchFromAPI(API_HOST_PINNACLE, '/kit/v1/odds?sport_id=1&period_number=1&odds_format=decimal&lang=en&date_format=iso', BASE_URL_PINNACLE, API_KEY_PINNACLE);
     if (oddsData && oddsData.error || !oddsData?.leagues?.length) { 
         carregarFallback();
         return;
@@ -88,7 +142,7 @@ async function carregarJogos() {
 
     oddsData.leagues.forEach(league => {
         league.events?.forEach(event => {
-            if (count >= 8) return; // Limita a 8 jogos
+            if (count >= 8) return;
 
             const home = event.home_team || 'Time da Casa';
             const away = event.away_team || 'Time Visitante';
@@ -123,7 +177,6 @@ async function carregarJogos() {
                 const oddValue = parseFloat(odds.home) > parseFloat(odds.away) ? odds.away : odds.home;
                 oddDia = {
                     jogo: `${home} × ${away}`,
-                    // Multiplicado por 1.5 para dar uma 'turbinada' na Odd do Dia de exemplo
                     odd: (parseFloat(oddValue) * 1.5).toFixed(2), 
                     desc: `${parseFloat(oddValue) > 2 ? 'Vitória Simples' : 'Handicap -0.5'} do Time Favorito`
                 };
@@ -144,7 +197,7 @@ async function carregarJogos() {
 }
 
 
-// --- LÓGICA VIP (LOGIN/LOGOUT) ---
+// --- LÓGICA VIP (MANTIDA IGUAL) ---
 
 const navVipLink = document.getElementById('nav-vip-link');
 const loginSection = document.getElementById('login-vip');
@@ -154,7 +207,7 @@ const loginForm = document.getElementById('loginForm');
 const loginErro = document.getElementById('loginErro');
 const logoutBtn = document.getElementById('logoutBtn');
 
-// 1. Alterna para a tela de Login/Conteúdo VIP
+// ... (O restante da lógica VIP: event listeners e função mostrarConteudoVip permanecem iguais) ...
 navVipLink.addEventListener('click', (e) => {
     e.preventDefault();
     if (sessionStorage.getItem('isLoggedIn') === 'true') {
@@ -168,7 +221,6 @@ navVipLink.addEventListener('click', (e) => {
     navVipLink.classList.add('active');
 });
 
-// 2. Processa o Login
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const user = document.getElementById('username').value;
@@ -183,7 +235,6 @@ loginForm.addEventListener('submit', (e) => {
     }
 });
 
-// 3. Processa o Logout
 logoutBtn.addEventListener('click', () => {
     sessionStorage.removeItem('isLoggedIn');
     mostrarConteudoVip(false);
@@ -193,7 +244,6 @@ logoutBtn.addEventListener('click', () => {
     document.getElementById('password').value = '';
 });
 
-// Função para alternar as visualizações (Login/VIP/Padrão)
 function mostrarConteudoVip(estaLogado) {
     loginSection.style.display = 'none';
     conteudoVip.style.display = 'none';
@@ -204,7 +254,6 @@ function mostrarConteudoVip(estaLogado) {
     } else {
         conteudoPadrao.style.display = 'block';
         navVipLink.classList.remove('active');
-        // Mantém o primeiro link (Ao Vivo) como ativo ao voltar
         const primeiroLink = document.querySelector('nav a:first-child');
         if (primeiroLink) {
              primeiroLink.classList.add('active');
@@ -212,17 +261,19 @@ function mostrarConteudoVip(estaLogado) {
     }
 }
 
+
 // 4. Carrega tudo ao iniciar
 document.addEventListener('DOMContentLoaded', () => {
-    carregarJogos();
+    // Chamadas da API Pinnacle e das novas APIs
+    carregarJogos(); 
+    buscarTimesDeFutebol(); // Chamada da nova API de Futebol
+    buscarEstatisticasNBA();  // Chamada da nova API da NBA
 
-    // Inicia mostrando o conteúdo padrão
+    // Lógica VIP
     mostrarConteudoVip(false); 
 
-    // Verifica se o usuário estava logado na última sessão
     if (sessionStorage.getItem('isLoggedIn') === 'true') {
          mostrarConteudoVip(true); 
-         // Define a Área VIP como ativa na navegação
          navVipLink.classList.add('active');
          const primeiroLink = document.querySelector('nav a:first-child');
          if (primeiroLink) {
