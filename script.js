@@ -137,17 +137,43 @@ function renderMultiplaDia() {
     multiplaLista.innerHTML = htmlContent;
 }
 
-// D) RENDERIZA A PÁGINA DEDICADA DA NBA (Placeholder)
+// D) RENDERIZA A PÁGINA DEDICADA DA NBA (CORRIGIDO)
 function renderNbaPage() {
     const nbaLista = document.getElementById('nbaLista');
     if (!nbaLista) return;
+
+    const allNbaGames = [
+        { nome: "Boston Celtics x Philadelphia 76ers", liga: "01:00 BRT", odds: [1.65, 2.25], palpite: "Celtics -4.5 Pontos" },
+        { nome: "Denver Nuggets x Golden State Warriors", liga: "23:30 BRT", odds: [1.35, 3.10], palpite: "Over 235.5 Pontos" },
+        { nome: "Phoenix Suns x Dallas Mavericks", liga: "21:00 BRT", odds: [1.70, 2.15], palpite: "Mavericks +3.5 Pontos" },
+    ];
+
+    let htmlContent = '<h2>🏀 Jogos da NBA (Moneyline / Spreads)</h2>';
     
-    const htmlContent = `
-        <div class="placeholder-content">
-            <h3>🏀 Em Breve: Análise e Palpites Exclusivos da NBA!</h3>
-            <p>Os jogos da temporada de basquete serão publicados aqui em breve. Fique ligado!</p>
-        </div>
-    `;
+    allNbaGames.forEach(jogo => {
+        const [casa, fora] = jogo.nome.split(' x ');
+        
+        htmlContent += `
+            <div class="jogo-card nba-item" style="border-left: 5px solid #ff9800;" data-game-id="${jogo.nome}">
+                <div class="info">
+                    <strong>${casa} vs ${fora}</strong>
+                    <small>${jogo.liga}</small>
+                </div>
+                <div class="odds">
+                    <span class="odd-btn" style="background-color: var(--primary-color); color: #fff;" title="Vitória ${casa} (ML)">${jogo.odds[0].toFixed(2)}</span>
+                    <span class="odd-btn" style="background-color: var(--primary-color); color: #fff;" title="Vitória ${fora} (ML)">${jogo.odds[1].toFixed(2)}</span>
+                </div>
+                <div class="palpite-sugerido hidden"> 
+                    <p>🔥 Sugestão do Dia Camillo Bets:</p>
+                    <div class="palpite-box" style="background-color: #444;">
+                        <span class="palpite-desc">${jogo.palpite}</span>
+                        <span class="odd-final" style="color: var(--accent-color);">@ 1.90</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
     nbaLista.innerHTML = htmlContent;
 }
 
@@ -172,16 +198,23 @@ function renderBingoPage() {
 
 function setupGameCardToggle() {
     const jogosLista = document.getElementById('jogosLista');
-    if (!jogosLista) return;
-
-    jogosLista.addEventListener('click', (e) => {
-        const card = e.target.closest('.jogo-card');
-        if (!card) return; 
-        const suggestion = card.querySelector('.palpite-sugerido');
-        if (suggestion) {
-            suggestion.classList.toggle('hidden');
-        }
-    });
+    const nbaLista = document.getElementById('nbaLista');
+    
+    const addToggleListener = (container) => {
+        if (!container) return;
+        container.addEventListener('click', (e) => {
+            const card = e.target.closest('.jogo-card');
+            if (!card) return; 
+            const suggestion = card.querySelector('.palpite-sugerido');
+            if (suggestion) {
+                suggestion.classList.toggle('hidden');
+            }
+        });
+    };
+    
+    // Aplica o toggle nos cards de futebol e NBA
+    addToggleListener(jogosLista);
+    addToggleListener(nbaLista);
 }
 
 function setupNavigation() {
@@ -239,7 +272,6 @@ function setupVipArea() {
     const loginForm = document.getElementById('loginForm');
     const loginErro = document.getElementById('loginErro');
     
-    // O botão de logout é recriado em renderVipContent, então configuramos ele lá.
     if (!loginForm) return;
     
     const showPage = (pageId) => {
@@ -284,7 +316,7 @@ function renderVipContent() {
     // Conteúdo VIP Premium (Palpite do dia)
     const palpitePremium = `
         <div class="vip-article section-card" style="border-left: 5px solid var(--accent-color);">
-            <h3 style="color: var(--primary-color); border-bottom: 1px dashed var(--bg-dark);">💎 Palpite Premium de Hoje:</h3>
+            <h3 style="color: var(--primary-color); border-bottom: 1px dashed var(--bg-card); padding-bottom: 10px;">💎 Palpite Premium de Hoje:</h3>
             <p style="font-weight: 600;">JOGO EXCLUSIVO: **Liverpool (Vitória) vs. Chelsea**</p>
             <p style="font-weight: 600;">MERCADO SUGERIDO: **Vitória Simples do Liverpool**</p>
             <p style="font-size: 1.5rem; color: var(--accent-color); font-weight: 900;">ODD MÍNIMA: 2.15</p>
@@ -339,15 +371,3 @@ function renderVipContent() {
     vipContentSection.innerHTML = `
         ${palpitePremium}
         ${manualDeOuro}
-        <button class="logout" id="logoutBtn" style="margin-top: 30px;">Sair da Área VIP</button>
-    `;
-
-    // É CRÍTICO re-adicionar o listener de logout após recriar o botão
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        localStorage.removeItem('isLoggedIn');
-        document.querySelectorAll('.page-content').forEach(page => page.style.display = 'none');
-        document.getElementById('jogos-dia').style.display = 'block';
-        document.querySelectorAll('.nav-item').forEach(link => link.classList.remove('active'));
-        document.querySelector('[data-page="jogos-dia"]').classList.add('active');
-    });
-}
