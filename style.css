@@ -1,4 +1,443 @@
 /* =======================================
+   CONFIGURAÇÕES GERAIS E VARIÁVEIS
+   ======================================= */
+:root {
+    --bg-dark: #1e1e1e;
+    --bg-card: #2c2c2c;
+    --text-light: #f0f0f0;
+    --text-muted: #aaaaaa;
+    --primary-color: #ff3333; /* Vermelho forte para Odd/Destaque */
+    --accent-color: #00ff66; /* Verde Neon para Odd/Sinal */
+    --link-hover: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Rajdhani', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+a {
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: var(--link-hover);
+}
+
+h1, h2, h3 {
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+h2 {
+    font-size: 1.8rem;
+    padding-bottom: 5px;
+    border-bottom: 2px solid var(--bg-card);
+    margin-bottom: 20px;
+}
+
+/* =======================================
+   LAYOUT PRINCIPAL
+   ======================================= */
+.site-wrapper {
+    flex-grow: 1;
+    padding: 20px 0;
+}
+
+.content-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 15px;
+    display: flex;
+    gap: 25px;
+}
+
+.main-content-area {
+    flex: 3; /* Ocupa mais espaço */
+    min-width: 0;
+}
+
+.sidebar-area {
+    flex: 1; /* Ocupa menos espaço */
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* =======================================
+   HEADER/NAV
+   ======================================= */
+.header-site {
+    background-color: var(--primary-color);
+    padding: 10px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    border-bottom: 4px solid var(--accent-color);
+}
+
+.header-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-site {
+    color: #000;
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.main-nav {
+    display: flex;
+    gap: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.nav-item {
+    color: #000;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.nav-item:hover, .nav-item.active {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #fff;
+}
+.nav-vip {
+    background-color: var(--accent-color);
+    color: #000 !important;
+    font-weight: 700;
+}
+.nav-vip:hover {
+    background-color: #00e65c;
+}
+
+/* =======================================
+   SEÇÕES GERAIS E CARDS
+   ======================================= */
+.section-card {
+    background-color: var(--bg-card);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.jogos-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.jogo-card {
+    background-color: #333;
+    padding: 15px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 5px solid var(--primary-color);
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.jogo-card:hover {
+    background-color: #3a3a3a;
+    transform: translateY(-2px);
+}
+
+.jogo-card .info strong {
+    font-size: 1.2rem;
+    display: block;
+}
+
+.jogo-card .info small {
+    color: var(--text-muted);
+}
+
+.jogo-card .odds {
+    display: flex;
+    gap: 8px;
+}
+
+.odd-btn {
+    background-color: var(--primary-color);
+    color: #fff;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* =======================================
+   ODD DO DIA (SIDEBAR)
+   ======================================= */
+.odd-dia-destaque {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.odd-dia-destaque h2 {
+    color: #fff;
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+.odd-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.odd-value {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--accent-color);
+    line-height: 1;
+}
+
+.odd-details {
+    margin-top: 10px;
+}
+
+.jogo-nome {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #000;
+}
+
+.jogo-desc {
+    font-size: 0.9rem;
+    color: #000;
+}
+
+/* =======================================
+   ESTATÍSTICAS AO VIVO (SIDEBAR)
+   ======================================= */
+.stats-live-card {
+    background-color: var(--bg-card);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px dashed #444;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-item span {
+    color: var(--text-muted);
+}
+
+.stat-item strong {
+    color: var(--accent-color);
+}
+
+/* =======================================
+   ÁREA VIP / LOGIN
+   ======================================= */
+#loginForm input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: #444;
+    border: none;
+    color: var(--text-light);
+    border-radius: 4px;
+}
+
+#loginForm button {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 700;
+    transition: background-color 0.2s;
+}
+
+#loginForm button:hover {
+    background-color: #cc2222;
+}
+
+.erro {
+    color: var(--primary-color);
+    text-align: center;
+    margin-top: 10px;
+}
+.logout {
+    background-color: var(--text-muted);
+    color: #000;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+/* =======================================
+   PLACEHOLDER (NBA / BINGO VAZIO)
+   ======================================= */
+.placeholder-content {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #3a3a3a;
+    border-radius: 6px;
+    border: 1px dashed #555;
+}
+.placeholder-content h2, .placeholder-content h3 {
+    color: var(--accent-color);
+}
+.placeholder-content p {
+    color: var(--text-muted);
+    margin-top: 10px;
+}
+.bingo-btn {
+    background-color: var(--accent-color);
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+
+/* =======================================
+   WHATSAPP BUTTON
+   ======================================= */
+.whatsapp-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #25d366;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: background-color 0.2s;
+}
+
+.whatsapp-btn:hover {
+    background-color: #128c7e;
+}
+
+/* =======================================
+   RODAPÉ
+   ======================================= */
+footer {
+    text-align: center;
+    padding: 15px;
+    background-color: #111;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-top: auto;
+}
+
+/* =======================================
+   ESTILOS NOVOS PARA TOGGLE DO JOGO DO DIA
+   ======================================= */
+.jogo-card {
+    cursor: pointer; 
+    flex-wrap: wrap; 
+    align-items: flex-start; 
+}
+.jogo-card .info {
+    flex-grow: 1; 
+}
+.jogo-card .odds {
+    flex-shrink: 0; 
+}
+
+/* Container do Palpite Sugerido */
+.palpite-sugerido {
+    width: 100%; 
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #444;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out, margin 0.3s ease-out;
+    opacity: 1;
+    max-height: 100px; 
+    overflow: hidden;
+}
+
+/* Estado Escondido (Hidden) */
+.palpite-sugerido.hidden {
+    opacity: 0;
+    max-height: 0; 
+    padding-top: 0;
+    margin-top: 0;
+    border-top: none;
+}
+
+.palpite-sugerido p {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 5px;
+}
+
+/* Caixa de destaque do Palpite */
+.palpite-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #555;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.palpite-desc {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.odd-final {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--accent-color); 
+}
+
+
+/* =======================================
    ESTILOS MÚLTIPLAS POR RISCO
    ======================================= */
 .multipla-section {
@@ -57,4 +496,40 @@
 }
 .multipla-btn:hover {
     transform: translateY(-2px);
+}
+
+/* =======================================
+   MEDIA QUERIES
+   ======================================= */
+@media (max-width: 1024px) {
+    .content-container {
+        flex-direction: column;
+    }
+    .main-content-area, .sidebar-area {
+        min-width: unset;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    .main-nav {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .jogo-card {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .jogo-card .info {
+        flex: 1 1 100%; /* Ocupa linha inteira no topo */
+    }
+    .jogo-card .odds {
+        flex: 1 1 auto; /* Odds ocupam a linha de baixo */
+        justify-content: flex-start;
+    }
 }
