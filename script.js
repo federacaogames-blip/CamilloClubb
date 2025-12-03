@@ -9,13 +9,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Configura a navegação e o comportamento da Área VIP
     setupNavigation(); 
     setupVipArea();
+    
+    // NOVO: Configura a interatividade dos cards de jogos
+    setupGameCardToggle(); 
 });
 
 // =======================================================
-// Funções de Renderização de Conteúdo (Com Dados Reais de 03/12/2025)
+// Funções de Renderização de Conteúdo (Com Dados Atualizados)
 // =======================================================
 
-// A) RENDERIZA OS PRINCIPAIS JOGOS DO DIA
+// A) RENDERIZA OS PRINCIPAIS JOGOS DO DIA (Agora com Palpite Sugerido)
 function renderJogosDoDia() {
     const jogosLista = document.getElementById('jogosLista');
     if (!jogosLista) return;
@@ -23,22 +26,62 @@ function renderJogosDoDia() {
     // Dados baseados nos jogos do dia 03 de Dezembro de 2025
     const jogosData = [
         // PREMIER LEAGUE
-        { nome: "Arsenal x Brentford", liga: "Premier League - 16:30 BRT (PALPITE)", odds: [1.45, 4.30, 6.50] },
-        { nome: "Liverpool x Sunderland", liga: "Premier League - 17:15 BRT (PALPITE)", odds: [1.20, 5.80, 11.0] },
+        { 
+            nome: "Arsenal x Brentford", 
+            liga: "Premier League - 16:30 BRT", 
+            odds: [1.45, 4.30, 6.50],
+            palpite_unico: "Arsenal Vence Ambos os Tempos", 
+            odd_sugerida: 2.75 
+        },
+        { 
+            nome: "Liverpool x Sunderland", 
+            liga: "Premier League - 17:15 BRT", 
+            odds: [1.20, 5.80, 11.0],
+            palpite_unico: "Mais de 10.5 Escanteios", 
+            odd_sugerida: 1.90 
+        },
         // COPA DA ALEMANHA
-        { nome: "Union Berlin x Bayern", liga: "DFB-Pokal - 16:45 BRT (PALPITE)", odds: [5.50, 4.20, 1.60] },
+        { 
+            nome: "Union Berlin x Bayern", 
+            liga: "DFB-Pokal - 16:45 BRT", 
+            odds: [5.50, 4.20, 1.60],
+            palpite_unico: "Ambos Marcam (SIM)", 
+            odd_sugerida: 1.85 
+        },
         // LA LIGA
-        { nome: "Athletic Bilbao x Real Madrid", liga: "La Liga - 15:00 BRT (PALPITE)", odds: [3.10, 3.40, 2.15] },
+        { 
+            nome: "Athletic Bilbao x Real Madrid", 
+            liga: "La Liga - 15:00 BRT", 
+            odds: [3.10, 3.40, 2.15],
+            palpite_unico: "Under 2.5 Gols", 
+            odd_sugerida: 1.80 
+        },
         // BRASILEIRÃO SÉRIE A
-        { nome: "Atlético-MG x Palmeiras", liga: "Brasileirão - 21:30 BRT (PALPITE)", odds: [2.35, 3.10, 2.95] },
-        { nome: "Flamengo x Ceará", liga: "Brasileirão - 21:30 BRT (PALPITE)", odds: [1.50, 4.10, 5.80] },
+        { 
+            nome: "Atlético-MG x Palmeiras", 
+            liga: "Brasileirão - 21:30 BRT", 
+            odds: [2.35, 3.10, 2.95],
+            palpite_unico: "Vitória do Atlético-MG (ML)", 
+            odd_sugerida: 2.35 
+        },
+        { 
+            nome: "Flamengo x Ceará", 
+            liga: "Brasileirão - 21:30 BRT", 
+            odds: [1.50, 4.10, 5.80],
+            palpite_unico: "Over 1.5 Gols FT", 
+            odd_sugerida: 1.35 
+        },
     ];
 
     let htmlContent = '';
     
-    jogosData.forEach(jogo => {
+    // Adiciona o aviso de interação no topo da seção
+    htmlContent += '<p class="multipla-info" style="margin-bottom: 20px;">Clique em qualquer jogo para revelar a sugestão de aposta do dia!</p>';
+
+
+    jogosData.forEach((jogo, index) => {
         htmlContent += `
-            <div class="jogo-card">
+            <div class="jogo-card" data-game-id="jogo-${index}">
                 <div class="info">
                     <strong>${jogo.nome}</strong>
                     <small>${jogo.liga}</small>
@@ -48,6 +91,14 @@ function renderJogosDoDia() {
                     <span class="odd-btn" title="Empate">${jogo.odds[1]}</span>
                     <span class="odd-btn" title="Vitória Fora">${jogo.odds[2]}</span>
                 </div>
+                
+                <div class="palpite-sugerido hidden"> 
+                    <p>🔥 Sugestão do Dia Camillo Bets:</p>
+                    <div class="palpite-box">
+                        <span class="palpite-desc">${jogo.palpite_unico}</span>
+                        <span class="odd-final">@ ${jogo.odd_sugerida}</span>
+                    </div>
+                </div>
             </div>
         `;
     });
@@ -55,31 +106,49 @@ function renderJogosDoDia() {
     jogosLista.innerHTML = htmlContent;
 }
 
-// B) RENDERIZA A ODD DO DIA
+// NOVO: Função para fazer o toggle do palpite sugerido
+function setupGameCardToggle() {
+    const jogosLista = document.getElementById('jogosLista');
+    if (!jogosLista) return;
+
+    jogosLista.addEventListener('click', (e) => {
+        // Encontra o card do jogo clicado
+        const card = e.target.closest('.jogo-card');
+        if (!card) return; 
+
+        // Encontra a sugestão dentro do card
+        const suggestion = card.querySelector('.palpite-sugerido');
+        if (suggestion) {
+            // Alterna a classe 'hidden' para mostrar/esconder
+            suggestion.classList.toggle('hidden');
+        }
+    });
+}
+
+
+// B) RENDERIZA A ODD DO DIA (Mantido)
 function renderOddDoDia() {
     const oddDiaOdd = document.getElementById('oddDiaOdd');
     const oddDiaJogo = document.getElementById('oddDiaJogo');
     const oddDiaDesc = document.getElementById('oddDiaDesc');
 
-    // Usando a ODD FACIL da Premier League para o destaque
     if (oddDiaOdd) oddDiaOdd.textContent = '1.72'; 
     if (oddDiaJogo) oddDiaJogo.textContent = 'Arsenal x Brentford';
     if (oddDiaDesc) oddDiaDesc.textContent = 'Palpite: Under 10.5 Corners';
 }
 
-// C) RENDERIZA A PÁGINA MÚLTIPLA DO DIA (Fácil - Baixo Risco)
+// C) RENDERIZA A PÁGINA MÚLTIPLA DO DIA (Fácil - Baixo Risco - Mantido)
 function renderMultiplaDia() {
     const multiplaLista = document.getElementById('multiplaLista');
     if (!multiplaLista) return;
 
-    // Múltipla Fácil do Brasileirão (Odds ~2.52)
     const multiplaData = [
         { nome: "Red Bull Bragantino × Vitória", liga: "Brasileirão - Palpite: Under 2.5 Gols", odds: [1.80] },
         { nome: "Fortaleza × Corinthians", liga: "Brasileirão - Palpite: Under 2.5 Gols", odds: [1.72] },
         { nome: "Bahia × Sport", liga: "Brasileirão - Palpite: Under 2.5 Gols", odds: [1.85] },
     ];
     
-    const oddTotal = 5.71; // Produto das odds: 1.80 * 1.72 * 1.85 = 5.71
+    const oddTotal = 5.71; 
     let htmlContent = `<h3>Palpites da Múltipla (Odd Total: ${oddTotal.toFixed(2)})</h3>`;
     htmlContent += '<p class="multipla-info" style="color: #66ff66;">🎯 BAILARINA: Múltipla de Baixo Risco. (70% under em H2H recentes)</p>';
     
@@ -100,7 +169,7 @@ function renderMultiplaDia() {
     multiplaLista.innerHTML = htmlContent;
 }
 
-// D) RENDERIZA A PÁGINA DEDICADA DA NBA (Dados Fictícios)
+// D) RENDERIZA A PÁGINA DEDICADA DA NBA (Mantido)
 function renderNbaPage() {
     const nbaLista = document.getElementById('nbaLista');
     if (!nbaLista) return;
@@ -131,19 +200,18 @@ function renderNbaPage() {
     nbaLista.innerHTML = htmlContent;
 }
 
-// E) RENDERIZA A PÁGINA BINGO (MÚLTIPLA HIGH ODD - Ousada do Brasileirão)
+// E) RENDERIZA A PÁGINA BINGO (MÚLTIPLA HIGH ODD - Mantido)
 function renderBingoPage() {
     const bingoContent = document.getElementById('bingoContent');
     if (!bingoContent) return;
 
-    // Múltipla Ousada do Brasileirão (Odds ~10.02)
     const highOddMultipla = [
         { nome: "Juventude x Santos", liga: "Brasileirão - Palpite: Over 3.5 Gols", odd: 3.50 },
         { nome: "Juventude x Santos", liga: "Brasileirão - Palpite: Over 9.5 Corners", odd: 2.20 },
         { nome: "Bahia x Sport", liga: "Brasileirão - Palpite: Over 2.5 Gols", odd: 2.80 }
     ];
     
-    const oddTotal = 21.56; // Produto das odds: 3.50 * 2.20 * 2.80 = 21.56
+    const oddTotal = 21.56; 
     
     let htmlContent = `<h3 style="color: #00ff66;">🎯 MEGA ODD DO DIA: ${oddTotal.toFixed(2)}</h3>`;
     htmlContent += '<p class="multipla-info">🔥 HIGH STAKES: Múltipla de Alto Risco, focada em mercados de volume e placares abertos (Odd: ~21.56).</p>';
@@ -174,13 +242,9 @@ function renderBingoPage() {
 }
 
 
-// =======================================================
 // Funções de Navegação e Área VIP (Mantidas)
-// =======================================================
-
 function setupNavigation() {
     const navLinks = document.querySelectorAll('.nav-item');
-    
     const hideAllPages = () => {
         document.querySelectorAll('.page-content').forEach(page => page.style.display = 'none');
         navLinks.forEach(link => link.classList.remove('active'));
@@ -189,19 +253,14 @@ function setupNavigation() {
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             const pageId = link.getAttribute('data-page');
-
             if (!pageId) return; 
-
             e.preventDefault();
-            
             if (pageId === 'vip-login') {
                 handleVipAreaClick(link);
                 return;
             }
-
             hideAllPages();
             link.classList.add('active');
-            
             const targetPage = document.getElementById(pageId);
             if (targetPage) {
                 targetPage.style.display = 'block';
@@ -209,48 +268,36 @@ function setupNavigation() {
         });
     });
 }
-
 function handleVipAreaClick(navLink) {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const loginSection = document.getElementById('vip-login');
     const conteudoVipSection = document.getElementById('vip-content');
-
     const hideAllPages = () => {
         document.querySelectorAll('.page-content').forEach(page => page.style.display = 'none');
         document.querySelectorAll('.nav-item').forEach(link => link.classList.remove('active'));
     };
-    
     hideAllPages();
     navLink.classList.add('active');
-
     if (isLoggedIn) {
         if (conteudoVipSection) conteudoVipSection.style.display = 'block';
     } else {
         if (loginSection) loginSection.style.display = 'block';
     }
 }
-
-
 function setupVipArea() {
     const loginForm = document.getElementById('loginForm');
     const loginErro = document.getElementById('loginErro');
     const logoutBtn = document.getElementById('logoutBtn');
-    
     if (!loginForm || !logoutBtn) return;
-    
     const showPage = (pageId) => {
         document.querySelectorAll('.page-content').forEach(page => page.style.display = 'none');
         const targetPage = document.getElementById(pageId);
         if (targetPage) targetPage.style.display = 'block';
     };
-
-    // Ação do login
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-
-        // Simulação de credenciais
         if (username === 'camillo' && password === 'bets2025') {
             localStorage.setItem('isLoggedIn', 'true');
             loginErro.style.display = 'none';
@@ -259,8 +306,6 @@ function setupVipArea() {
             loginErro.style.display = 'block';
         }
     });
-
-    // Ação do logout
     logoutBtn.addEventListener('click', () => {
         localStorage.removeItem('isLoggedIn');
         showPage('jogos-dia');
