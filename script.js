@@ -163,7 +163,7 @@ function renderBingoPage() {
 }
 
 // =======================================================
-// Funções de Interatividade e Login (BÁSICAS)
+// Funções de Interatividade e Login (INCLUINDO CONTEÚDO VIP)
 // =======================================================
 
 function setupGameCardToggle() {
@@ -193,6 +193,12 @@ function setupNavigation() {
             if (!pageId) return; 
             e.preventDefault();
             
+            // Tratamento especial para a Área VIP
+            if (pageId === 'vip-login') {
+                handleVipAreaClick(link);
+                return;
+            }
+            
             hideAllPages();
             link.classList.add('active');
             
@@ -204,18 +210,29 @@ function setupNavigation() {
     });
 }
 
-function handleVipAreaClick() {
+// FUNÇÃO ATUALIZADA PARA TRATAR A NAVEGAÇÃO VIP
+function handleVipAreaClick(navLink) {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const loginSection = document.getElementById('vip-login');
     const conteudoVipSection = document.getElementById('vip-content');
-
+    const hideAllPages = () => {
+        document.querySelectorAll('.page-content').forEach(page => page.style.display = 'none');
+        document.querySelectorAll('.nav-item').forEach(link => link.classList.remove('active'));
+    };
+    hideAllPages();
+    navLink.classList.add('active');
+    
     if (isLoggedIn) {
-        if (conteudoVipSection) conteudoVipSection.style.display = 'block';
+        if (conteudoVipSection) {
+            conteudoVipSection.style.display = 'block';
+            renderVipContent(); // <-- CHAMA O CONTEÚDO VIP
+        }
     } else {
         if (loginSection) loginSection.style.display = 'block';
     }
 }
 
+// FUNÇÃO ATUALIZADA PARA LOGIN E CARREGAMENTO DO CONTEÚDO
 function setupVipArea() {
     const loginForm = document.getElementById('loginForm');
     const loginErro = document.getElementById('loginErro');
@@ -234,11 +251,17 @@ function setupVipArea() {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
-        // Versão básica de login
-        if (username === 'camillo' && password === 'bets2025') {
+        // CHECK DE CREDENCIAIS (Antiga + Nova)
+        const loginSuccess = (
+            (username === 'camillo' && password === 'bets2025') ||
+            (username === 'camillo22' && password === '19032011') // NOVO USUÁRIO
+        );
+
+        if (loginSuccess) {
             localStorage.setItem('isLoggedIn', 'true');
             loginErro.style.display = 'none';
             showPage('vip-content'); 
+            renderVipContent(); // <-- CHAMA O CONTEÚDO VIP APÓS LOGIN
         } else {
             loginErro.style.display = 'block';
         }
@@ -250,10 +273,60 @@ function setupVipArea() {
         document.querySelector('[data-page="jogos-dia"]').classList.add('active');
         document.querySelector('[data-page="vip-login"]').classList.remove('active');
     });
-
-    // Ajusta a exibição inicial da área VIP
-    document.querySelector('[data-page="vip-login"]').addEventListener('click', (e) => {
-        e.preventDefault();
-        handleVipAreaClick();
-    });
 }
+
+// CONTEÚDO DIDÁTICO DO MANUAL DE OURO
+function renderVipContent() {
+    const vipContent = document.getElementById('vip-content-body'); 
+    if (!vipContent) return;
+
+    const htmlContent = `
+        <div class="vip-article">
+            <h2>👑 O Manual de Ouro: Gestão de Banca (2025)</h2>
+            <p>Este material é o pilar de qualquer apostador profissional. Siga as regras à risca para garantir lucro a longo prazo.</p>
+
+            <h3>1. Quanto dinheiro colocar na banca inicial?</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>Perfil</th><th>Valor sugerido (R$)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Iniciante / recreativo</td><td>300 – 1.000</td></tr>
+                        <tr><td>Semi-profissional</td><td>2.000 – 10.000</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>3. As 7 Regras Sagradas da Gestão de Banca</h3>
+            <ul>
+                <li>**1–2% por entrada:** Stake = 1–2% da banca atual.</li>
+                <li>**Nunca faça “all-in”** ou “martingale”.</li>
+                <li>Recalcule a stake a cada **7–10 dias**.</li>
+                <li>Separe lucro todo mês (**regra 50/30/20**).</li>
+                <li>Tenha **2 contas separadas** (Ativa e Reserva).</li>
+                <li>Regra dos **100 unidades mínimas**.</li>
+                <li>Pare se perder **20–25% da banca em um mês** (“Stop-loss mensal”).</li>
+            </ul>
+
+            <h3>4. Tabela Prática de Stakes (1% e 2%)</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>Banca Atual</th><th>Stake 1%</th><th>Stake 2%</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>R$ 1.000</td><td>R$ 10</td><td>R$ 20</td></tr>
+                        <tr><td>R$ 5.000</td><td>R$ 50</td><td>R$ 100</td></tr>
+                        <tr><td>R$ 10.000</td><td>R$ 100</td><td>R$ 200</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>7. Checklist diário antes de apostar (Imprima!)</h3>
+            <ul class="checklist">
+                <li>⚫ Minha stake está correta?</li>
+                <li>⚫ Estou *tiltado* ou querendo recuperar perdas?</li>
+                <li>⚫ Já perdi 3 unidades hoje? → **PARE.**</li>
+            </ul>
+        </div>
