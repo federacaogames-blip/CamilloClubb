@@ -7,9 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     renderBingoPage(); 
     
     // 2. Configura a interatividade principal
+    // É CRÍTICO que renderização venha antes dos setups!
     setupNavigation(); 
     setupVipArea();
-    setupGameCardToggle(); 
+    setupGameCardToggle(); // Garante o toggle nos novos cards
 });
 
 // =======================================================
@@ -60,7 +61,7 @@ function renderJogosDoDia() {
     jogosLista.innerHTML = htmlContent;
 }
 
-// B) RENDERIZA A ODD DO DIA
+// B) RENDERIZA A ODD DO DIA (Versão à Prova de Falhas)
 function renderOddDoDia() {
     const oddDiaOdd = document.getElementById('oddDiaOdd');
     const oddDiaJogo = document.getElementById('oddDiaJogo');
@@ -137,7 +138,7 @@ function renderMultiplaDia() {
     multiplaLista.innerHTML = htmlContent;
 }
 
-// D) RENDERIZA A PÁGINA DEDICADA DA NBA (CORRIGIDO)
+// D) RENDERIZA A PÁGINA DEDICADA DA NBA
 function renderNbaPage() {
     const nbaLista = document.getElementById('nbaLista');
     if (!nbaLista) return;
@@ -202,6 +203,8 @@ function setupGameCardToggle() {
     
     const addToggleListener = (container) => {
         if (!container) return;
+        // Adiciona o event listener ao container PAI (jogosLista ou nbaLista)
+        // Isso é mais eficiente e funciona mesmo se os cards forem criados dinamicamente
         container.addEventListener('click', (e) => {
             const card = e.target.closest('.jogo-card');
             if (!card) return; 
@@ -212,7 +215,7 @@ function setupGameCardToggle() {
         });
     };
     
-    // Aplica o toggle nos cards de futebol e NBA
+    // Aplica o toggle nos containers de cards
     addToggleListener(jogosLista);
     addToggleListener(nbaLista);
 }
@@ -371,3 +374,15 @@ function renderVipContent() {
     vipContentSection.innerHTML = `
         ${palpitePremium}
         ${manualDeOuro}
+        <button class="logout" id="logoutBtn" style="margin-top: 30px;">Sair da Área VIP</button>
+    `;
+
+    // É CRÍTICO re-adicionar o listener de logout após recriar o botão
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('isLoggedIn');
+        document.querySelectorAll('.page-content').forEach(page => page.style.display = 'none');
+        document.getElementById('jogos-dia').style.display = 'block';
+        document.querySelectorAll('.nav-item').forEach(link => link.classList.remove('active'));
+        document.querySelector('[data-page="jogos-dia"]').classList.add('active');
+    });
+}
