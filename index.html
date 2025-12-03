@@ -1,29 +1,92 @@
-<nav class="nav">
-    <a href="#" class="nav-item" data-page="multiplas">Múltiplas</a>
-    <a href="#" class="nav-item" data-page="bingo">BINGO</a>
-    <a href="#" class="nav-item" data-page="vip-login">ÁREA VIP</a> 
-</nav>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camillo Bets - Palpites e Análises Esportivas VIP</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
 
-<div id="vip-login" class="page-content" style="display: none;">
-    <div class="container login-container">
-        <h2>Área Exclusiva para Membros</h2>
-        <p>Acesse o Manual de Ouro e Palpites Premium.</p>
-        <form id="loginForm" class="login-form">
-            <input type="text" id="username" placeholder="Usuário" required>
-            <input type="password" id="password" placeholder="Senha" required>
-            <button type="submit">ENTRAR</button>
-            <p id="loginErro" style="display: none;">❌ Erro: Usuário ou senha incorretos. Tente: camillo22 / 19032011</p>
-        </form>
-    </div>
-</div>
-
-<div id="vip-content" class="page-content" style="display: none;">
-    <div class="container">
-        <div id="vip-content-body">
-            </div>
+    <header class="header">
+        <h1>CAMILLO BETS 👑</h1>
+        <p>A Força da Análise Profissional</p>
         
-        <button id="logoutBtn" class="multipla-btn ousada-btn" style="margin-top: 30px;">
-            SAIR DA ÁREA VIP
-        </button>
-    </div>
-</div>
+        <nav class="nav">
+            <a href="#" class="nav-item active" data-page="jogos-dia">Futebol do Dia</a>
+            <a href="#" class="nav-item" data-page="nba-page">NBA Premium</a>
+            <a href="#" class="nav-item" data-page="multiplas">Múltiplas</a>
+            <a href="#" class="nav-item" data-page="bingo">BINGO</a>
+            <a href="#" class="nav-item" data-page="vip-login">ÁREA VIP</a> 
+        </nav>
+    </header>
+
+    <main>
+        
+        <div id="jogos-dia" class="page-content">
+            <div class="container">
+                <h2>⚽ Jogos do Dia e Palpites Individuais</h2>
+
+                <div id="oddDoDiaBox">
+                    <span>ODD DE VALOR DO DIA</span>
+                    <strong id="oddDiaOdd">1.72</strong>
+                    <span id="oddDiaJogo">Arsenal x Brentford</span>
+                    <small id="oddDiaDesc">Palpite: Under 10.5 Corners</small>
+                </div>
+
+                <div id="jogosLista">
+                    </div>
+            </div>
+        </div>
+
+        <div id="multiplas" class="page-content" style="display: none;">
+            <div class="container">
+                <h2>💰 Múltiplas Analisadas (Futebol)</h2>
+                <div id="multiplaLista">
+                </div>
+            </div>
+        </div>
+
+        <div id="nba-page" class="page-content" style="display: none;">
+            <div class="container">
+                <div id="nbaLista">
+                </div>
+            </div>
+        </div>
+
+        <div id="bingo" class="page-content" style="display: none;">
+            <div class="container">
+                <div id="bingoContent">
+                    </div>
+            </div>
+        </div>
+
+        <div id="vip-login" class="page-content" style="display: none;">
+            <div class="container login-container">
+                <h2>Área Exclusiva para Membros</h2>
+                <p>Acesse o Manual de Ouro e Palpites Premium.</p>
+                <form id="loginForm" class="login-form">
+                    <input type="text" id="username" placeholder="Usuário" required>
+                    <input type="password" id="password" placeholder="Senha" required>
+                    <button type="submit">ENTRAR</button>
+                    <p id="loginErro" style="display: none;">❌ Erro: Usuário ou senha incorretos. Tente: camillo22 / 19032011</p>
+                </form>
+            </div>
+        </div>
+
+        <div id="vip-content" class="page-content" style="display: none;">
+            <div class="container">
+                <div id="vip-content-body">
+                    </div>
+                
+                <button id="logoutBtn" class="multipla-btn ousada-btn" style="margin-top: 30px;">
+                    SAIR DA ÁREA VIP
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="script.js"></script> 
+</body>
+</html>
