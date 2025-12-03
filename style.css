@@ -1,65 +1,60 @@
 /* =======================================
-   ESTILOS NOVOS PARA TOGGLE DO JOGO DO DIA
+   ESTILOS MÚLTIPLAS POR RISCO
    ======================================= */
-.jogo-card {
-    cursor: pointer; /* Indica que o card é clicável */
-    /* Faz o card ser flexível para que o palpite vá para a próxima linha */
-    flex-wrap: wrap; 
-    align-items: flex-start; 
+.multipla-section {
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #333;
 }
-.jogo-card .info {
-    flex-grow: 1; /* Permite que o info ocupe o espaço extra */
-}
-.jogo-card .odds {
-    flex-shrink: 0; /* Impede o encolhimento das odds */
+.multipla-section:last-child {
+    border-bottom: none;
 }
 
-/* Container do Palpite Sugerido */
-.palpite-sugerido {
-    width: 100%; /* Ocupa a largura total abaixo do info/odds */
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #444;
-    /* Transições suaves para o efeito de toggle */
-    transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out, margin 0.3s ease-out;
-    opacity: 1;
-    max-height: 100px; /* Altura máxima para transição */
-    overflow: hidden;
+/* --- TÍTULOS E BOTÕES --- */
+.facil {
+    color: #66ff66; /* Verde Claro */
+    border-left-color: #66ff66 !important;
+}
+.mediana {
+    color: #ffd700; /* Dourado/Amarelo */
+    border-left-color: #ffd700 !important;
+}
+.ousada {
+    color: var(--primary-color); /* Vermelho */
+    border-left-color: var(--primary-color) !important;
 }
 
-/* Estado Escondido (Hidden) */
-.palpite-sugerido.hidden {
-    opacity: 0;
-    max-height: 0; /* Colapsa a altura */
-    padding-top: 0;
-    margin-top: 0;
-    border-top: none;
+/* --- BACKGROUNDS DOS CARDS E BOTÕES --- */
+.facil-card {
+    border-left: 5px solid #66ff66;
+}
+.mediana-card {
+    border-left: 5px solid #ffd700;
+}
+.ousada-card {
+    border-left: 5px solid var(--primary-color);
 }
 
-.palpite-sugerido p {
-    font-size: 0.9rem;
-    color: var(--text-light);
-    margin-bottom: 5px;
-}
-
-/* Caixa de destaque do Palpite */
-.palpite-box {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #555;
-    padding: 8px 12px;
-    border-radius: 4px;
-}
-
-.palpite-desc {
-    font-size: 1.1rem;
+.multipla-btn {
+    padding: 12px 25px;
+    font-size: 1rem;
     font-weight: 700;
+    border-radius: 4px;
+    transition: transform 0.1s;
+}
+
+.facil-btn {
+    background-color: #66ff66;
+    color: #000;
+}
+.mediana-btn {
+    background-color: #ffd700;
+    color: #000;
+}
+.ousada-btn {
+    background-color: var(--primary-color);
     color: #fff;
 }
-
-.odd-final {
-    font-size: 1.2rem;
-    font-weight: 900;
-    color: var(--accent-color); /* Verde Neon para destaque da odd */
+.multipla-btn:hover {
+    transform: translateY(-2px);
 }
