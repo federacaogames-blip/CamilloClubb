@@ -220,24 +220,71 @@ function renderNbaPage() {
 
 
 // E) RENDERIZA A PÁGINA BINGO (Placeholder)
+// E) RENDERIZA A PÁGINA BINGO (Aposta Alta - 14 Picks)
 function renderBingoPage() {
     const bingoContent = document.getElementById('bingoContent');
-    // Checagem robusta
     if (!bingoContent) {
         console.error("ID 'bingoContent' não encontrado no HTML. Bingo não será exibido.");
         return;
     }
+
+    const bingoPicks = [
+        { jogo: "Freiburg vs. Darmstadt (14:00 BRT)", selecao: "BTTS Sim", odd: 1.85, justificativa: "60% BTTS em últimos 5 de Darmstadt (2.6 gols/jogo)." },
+        { jogo: "Bochum vs. Stuttgart (14:00 BRT)", selecao: "Over 2.5 Gols", odd: 1.95, justificativa: "60% over em H2H (2.8 gols médio); Stuttgart 2.0 gols/jogo recente." },
+        { jogo: "Athletic Bilbao vs. Real Madrid (15:00 BRT)", selecao: "Over 9.5 Escanteios", odd: 2.10, justificativa: "9.2 corners médio H2H; Madrid 4.8/jogo, Bilbao 4.4 em casa." },
+        { jogo: "Arsenal vs. Brentford (16:30 BRT)", selecao: "Over 2.5 Gols", odd: 2.00, justificativa: "50% over H2H (2.4 gols); Arsenal 2.0 marcados/jogo." },
+        { jogo: "Brighton vs. Aston Villa (16:30 BRT)", selecao: "BTTS Sim", odd: 1.80, justificativa: "80% BTTS em H2H (3.0 gols); Brighton 1.6/jogo, Villa 1.4." },
+        { jogo: "Burnley vs. Crystal Palace (16:30 BRT)", selecao: "Over 9.5 Escanteios", odd: 2.00, justificativa: "9.0 corners médio; Palace 4.4/jogo, Burnley 4.6 em casa." },
+        { jogo: "Wolves vs. Nottingham Forest (16:30 BRT)", selecao: "BTTS Sim", odd: 1.85, justificativa: "60% BTTS H2H (2.2 gols); Wolves 0.6 marcados mas concede 2.2." },
+        { jogo: "Union Berlin vs. Bayern (16:45 BRT)", selecao: "Over 2.5 Gols", odd: 1.85, justificativa: "80% over H2H (3.2 gols); Bayern 3.4/jogo, Union concede 1.6." },
+        { jogo: "HSV vs. Holstein Kiel (16:45 BRT)", selecao: "Over 9.5 Escanteios", odd: 2.10, justificativa: "9.4 corners médio; HSV 4.8/jogo, derby com volume alto." },
+        { jogo: "Leeds vs. Chelsea (17:15 BRT)", selecao: "Over 2.5 Gols", odd: 1.95, justificativa: "80% over H2H (3.2 gols); Leeds 1.2 marcados, Chelsea 2.0." },
+        { jogo: "Liverpool vs. Sunderland (17:15 BRT)", selecao: "BTTS Sim", odd: 2.00, justificativa: "40% BTTS recente, mas 60% em casa de Liverpool (2.8 gols total)." },
+        { jogo: "Bragantino vs. Vitória (19:00 BRT)", selecao: "Under 2.5 Gols", odd: 1.80, justificativa: "80% under H2H (1.8 gols); Bragantino 1.17 sofridos, Vitória 1.4." },
+        { jogo: "Fortaleza vs. Corinthians (19:00 BRT)", selecao: "Over 9.5 Escanteios", odd: 2.05, justificativa: "8.5 corners médio; Fortaleza 4.2/jogo, Corinthians 4.3." },
+        { jogo: "São Paulo vs. Internacional (20:00 BRT)", selecao: "BTTS Sim", odd: 1.95, justificativa: "60% BTTS H2H (2.2 gols); ambos 1.2/jogo recentes." }
+    ];
+
+    const oddTotal = (1.85 * 1.95 * 2.10 * 2.00 * 1.80 * 2.00 * 1.85 * 1.85 * 2.10 * 1.95 * 2.00 * 1.80 * 2.05 * 1.95).toFixed(2);
     
+    let picksHtml = '';
+    bingoPicks.forEach(pick => {
+        picksHtml += `
+            <div class="jogo-card multipla-item" style="border-left: 5px solid var(--accent-color);">
+                <div class="info">
+                    <strong>${pick.jogo}</strong>
+                    <small>${pick.selecao}</small>
+                </div>
+                <div class="odds">
+                    <span class="odd-btn" style="background-color: var(--accent-color); color: #000;">${pick.odd.toFixed(2)}</span>
+                </div>
+                <div class="palpite-sugerido" style="max-height: 100px; padding-top: 10px; opacity: 1;"> 
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">*Justificativa: ${pick.justificativa}</p>
+                </div>
+            </div>
+        `;
+    });
+
     const htmlContent = `
-        <div class="placeholder-content">
-            <h2>🎰 BINGO: Grande Aposta da Semana!</h2>
-            <p>Esta seção será reservada para uma Aposta Única de Altíssima Odd (Ex: Odd 20+).</p>
-            <button class="bingo-btn" style="margin-top: 15px;">Aguarde o Próximo Lançamento</button>
+        <div class="bingo-header" style="text-align: center; margin-bottom: 30px;">
+            <h2>🎰 BINGO: Múltipla Alta do Dia!</h2>
+            <p style="color: var(--text-muted);">Esta é a Aposta Ousada do dia, combinando 14 seleções de alto valor.</p>
+            <h1 style="color: var(--primary-color); font-size: 2.5rem; margin: 15px 0;">
+                ODD TOTAL: ${oddTotal}
+            </h1>
+            <p style="color: var(--accent-color); font-weight: 700;">STAKE SUGERIDA: 0.5% (Aposta de Risco)</p>
+        </div>
+        
+        <div class="bingo-picks-list">
+            ${picksHtml}
+        </div>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <button class="multipla-btn" style="background-color: var(--primary-color); color: #fff; font-size: 1.1rem; padding: 10px 30px;">COPIAR BINGO (14 PICKS)</button>
         </div>
     `;
     bingoContent.innerHTML = htmlContent;
 }
-
 // =======================================================
 // Funções de Interatividade, Navegação e Login
 // =======================================================
