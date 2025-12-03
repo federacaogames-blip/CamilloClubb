@@ -1,7 +1,7 @@
 /* --- 1. CONFIGURAÇÕES GLOBAIS E VARIÁVEIS --- */
 :root {
     --primary-color: #ff0000; /* Vermelho mais puro */
-    --accent-color: #00ff66; /* Verde neon para contraste (opcional) */
+    --accent-color: #00ff66; /* Verde neon para contraste (usado no Bingo) */
     --card-bg: #222; 
     --main-bg: #111; 
     --text-light: #aaa;
@@ -61,7 +61,7 @@ body {
     font-size: 1.1rem;
     transition: color 0.3s, border-bottom 0.3s;
     border-bottom: 3px solid transparent;
-    white-space: nowrap; /* Impede quebras de linha em nomes longos */
+    white-space: nowrap; 
 }
 
 .nav-item:hover,
@@ -129,7 +129,7 @@ h2 {
 .jogos-grid {
     display: grid;
     gap: 15px;
-    grid-template-columns: 1fr; /* Coluna única no centro */
+    grid-template-columns: 1fr; 
 }
 
 .jogo-card {
@@ -153,203 +153,4 @@ h2 {
     margin-bottom: 2px;
 }
 
-.jogo-card small {
-    color: var(--text-light);
-}
-
-.jogo-card .odds {
-    display: flex;
-    gap: 8px;
-}
-
-.jogo-card .odds span {
-    background-color: var(--odd-bg);
-    color: var(--text-white);
-    font-weight: 700;
-    font-size: 1rem;
-    padding: 8px 10px;
-    border-radius: 4px;
-    min-width: 50px;
-    text-align: center;
-    transition: background-color 0.2s;
-    cursor: pointer;
-}
-.jogo-card .odds span:hover {
-    background-color: #555;
-}
-
-
-/* --- 6. ODD DO DIA (SIDEBAR) --- */
-.odd-dia-destaque {
-    background-color: var(--primary-color);
-    color: #fff;
-    text-align: center;
-    padding: 25px;
-    margin-bottom: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(255, 0, 0, 0.5);
-}
-
-.odd-dia-destaque h2 {
-    color: #fff;
-    border-left: 5px solid #fff;
-    padding-left: 10px;
-}
-
-.odd-info {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 15px;
-}
-
-.odd-value {
-    font-size: 4rem;
-    font-weight: 900;
-    line-height: 1;
-    margin-right: 15px;
-}
-
-.odd-details {
-    text-align: left;
-}
-.jogo-nome {
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-.jogo-desc {
-    font-size: 0.9rem;
-    color: #eee;
-}
-
-/* --- 7. ESTATÍSTICAS E NBA --- */
-.stats-live-card h2 {
-    /* Destaca o título da seção de estatísticas */
-    color: #fff;
-    border-left: 5px solid #FBC02D; /* Amarelo/Dourado para sinalizar análise/status */
-}
-
-.stat-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px dashed #333;
-}
-.stat-item strong {
-    color: var(--primary-color);
-}
-
-
-/* --- 8. LOGIN VIP --- */
-#vip-login form,
-#vip-content {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-#vip-login input {
-    padding: 12px;
-    border-radius: 5px;
-    border: none;
-    background-color: #444;
-    color: #fff;
-}
-
-#vip-login button,
-#vip-content button,
-.bingo-btn {
-    background-color: var(--primary-color);
-    color: #fff;
-    padding: 12px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.bingo-btn {
-    background-color: #00ff66; /* Verde Neon para Bingo/Destaque */
-    color: #000;
-}
-.bingo-btn:hover {
-    background-color: #00cc52;
-}
-
-
-/* --- 9. AJUSTES NOVAS PÁGINAS --- */
-.placeholder-content {
-    background-color: #333;
-    padding: 30px;
-    border-radius: 6px;
-    text-align: center;
-    color: var(--text-light);
-    font-size: 1.1rem;
-    border: 1px dashed #555;
-}
-
-.multipla-info {
-    font-size: 1.1rem;
-    color: var(--text-light);
-    margin-bottom: 25px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #333;
-}
-
-
-/* --- 10. FOOTER e WhatsApp --- */
-footer {
-    background-color: #000;
-    color: var(--text-light);
-    text-align: center;
-    padding: 15px 0;
-    font-size: 0.9rem;
-    border-top: 1px solid #333;
-}
-
-.whatsapp-btn {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    width: 55px;
-    height: 55px;
-    background-color: #25d366;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.8rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-}
-
-/* --- 11. RESPONSIVIDADE (MOBILE) --- */
-@media (max-width: 992px) {
-    .header-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 15px;
-    }
-    .main-nav {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-    .content-container {
-        flex-direction: column;
-    }
-    .sidebar-area {
-        min-width: auto;
-    }
-    .jogo-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    .jogo-card .odds {
-        width: 100%;
-        justify-content: space-between;
-    }
-}
+.jogo-
