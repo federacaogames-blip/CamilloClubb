@@ -7,17 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
     renderBingoPage(); 
     
     // 2. Configura a interatividade principal
-    // É CRÍTICO que renderização venha antes dos setups!
     setupNavigation(); 
     setupVipArea();
-    setupGameCardToggle(); // Garante o toggle nos novos cards
+    setupGameCardToggle();
 });
 
 // =======================================================
 // Funções de Renderização de Conteúdo
 // =======================================================
 
-// A) RENDERIZA OS PRINCIPAIS JOGOS DO DIA
+// A) RENDERIZA OS PRINCIPAIS JOGOS DO DIA (FUTEBOL)
 function renderJogosDoDia() {
     const jogosLista = document.getElementById('jogosLista');
     if (!jogosLista) return;
@@ -61,7 +60,7 @@ function renderJogosDoDia() {
     jogosLista.innerHTML = htmlContent;
 }
 
-// B) RENDERIZA A ODD DO DIA (Versão à Prova de Falhas)
+// B) RENDERIZA A ODD DO DIA
 function renderOddDoDia() {
     const oddDiaOdd = document.getElementById('oddDiaOdd');
     const oddDiaJogo = document.getElementById('oddDiaJogo');
@@ -72,12 +71,12 @@ function renderOddDoDia() {
     if (oddDiaDesc) oddDiaDesc.textContent = 'Palpite: Under 10.5 Corners';
 }
 
-// C) RENDERIZA AS MÚLTIPLAS
+// C) RENDERIZA AS MÚLTIPLAS (FUTEBOL E NBA)
 function renderMultiplaDia() {
     const multiplaLista = document.getElementById('multiplaLista');
     if (!multiplaLista) return;
 
-    // --- MÚLTIPLA 1: FÁCIL (Baixo Risco) ---
+    // --- MÚLTIPLAS FUTEBOL ---
     const multiplaFacil = [
         { nome: "Red Bull Bragantino × Vitória", liga: "Brasileirão - Palpite: Under 2.5 Gols", odds: [1.80] },
         { nome: "Fortaleza × Corinthians", liga: "Brasileirão - Palpite: Under 2.5 Gols", odds: [1.72] },
@@ -85,7 +84,6 @@ function renderMultiplaDia() {
     ];
     const oddFacil = 5.71; 
     
-    // --- MÚLTIPLA 2: MEDIANA (Moderado) ---
     const multiplaMediana = [
         { nome: "Atlético-MG x Palmeiras", liga: "Brasileirão - Palpite: Over 2.5 Gols", odds: [2.10] },
         { nome: "São Paulo x Internacional", liga: "Brasileirão - Palpite: BTTS Sim", odds: [1.95] },
@@ -93,7 +91,6 @@ function renderMultiplaDia() {
     ];
     const oddMediana = 5.52; 
 
-    // --- MÚLTIPLA 3: OUSADA (Alto Risco) ---
     const multiplaOusada = [
         { nome: "Juventude x Santos", liga: "Brasileirão - Palpite: Over 3.5 Gols", odds: [3.50] },
         { nome: "Juventude x Santos", liga: "Brasileirão - Palpite: Over 9.5 Corners", odds: [2.20] },
@@ -101,11 +98,31 @@ function renderMultiplaDia() {
     ];
     const oddOusada = 21.56;
 
+    // --- MÚLTIPLAS NBA ---
+    
+    // MÚLTIPLA NBA 1: OVER/UNDER (PONTOS)
+    const multiplaNbaPontos = [
+        { nome: "OKC @ GSW (01:00)", liga: "Seleção: Over 223.5", odd: 1.88, justificativa: "Ambas as equipes veem Over em 24-18 combinados. Modelos projetam 225+." },
+        { nome: "POR @ CLE (21:00)", liga: "Seleção: Over 232.5", odd: 1.91, justificativa: "CLE em ritmo alto em casa. POR com overs em 7/10 road games." },
+        { nome: "DEN @ IND (21:00)", liga: "Seleção: Over 237.5", odd: 1.85, justificativa: "DEN e IND top-10 em pace; overs em 6/8 H2H recentes." },
+    ];
+    const oddNbaPontos = (1.88 * 1.91 * 1.85).toFixed(2);
+    
+    // MÚLTIPLA NBA 2: HANDICAP (SPREADS)
+    const multiplaNbaSpread = [
+        { nome: "DET vs ATL (21:00)", liga: "Seleção: Pistons -9.5", odd: 1.91, justificativa: "DET 16-4, 13 streak home; ATL sem Young, back-to-back." },
+        { nome: "WAS vs MIL (21:00)", liga: "Seleção: Bucks -10.5", odd: 1.91, justificativa: "MIL 7 vitórias H2H; WAS pior defesa." },
+        { nome: "UTA vs HOU (23:00)", liga: "Seleção: Rockets -12.5", odd: 1.91, justificativa: "HOU 13-4, 5 streak road; UTA 29º DRTG." },
+    ];
+    const oddNbaSpread = (1.91 * 1.91 * 1.91).toFixed(2);
+
+
     let htmlContent = '';
     
-    const renderMultiplaSection = (titulo, oddTotal, descricao, data, estilo) => {
+    const renderMultiplaSection = (titulo, oddTotal, descricao, data, estilo, tipoEsporte = 'Futebol') => {
         let sectionHtml = `<div class="multipla-section">`;
-        sectionHtml += `<h3 class="${estilo}">${titulo} (Odd Total: ${oddTotal.toFixed(2)})</h3>`;
+        sectionHtml += `<h2 style="color: var(--primary-color); margin-top: 30px;">${tipoEsporte}</h2>`; // Novo Título para separar esportes
+        sectionHtml += `<h3 class="${estilo}">${titulo} (Odd Total: ${oddTotal})</h3>`;
         sectionHtml += `<p class="multipla-info" style="color: var(--text-muted);">${descricao}</p>`;
         
         data.forEach(jogo => {
@@ -116,7 +133,7 @@ function renderMultiplaDia() {
                         <small>${jogo.liga}</small>
                     </div>
                     <div class="odds">
-                        <span class="odd-btn" style="background-color: var(--accent-color); color: #000;">${jogo.odds[0].toFixed(2)}</span>
+                        <span class="odd-btn" style="background-color: var(--accent-color); color: #000;">${jogo.odd ? jogo.odd.toFixed(2) : jogo.odds[0].toFixed(2)}</span>
                     </div>
                 </div>
             `;
@@ -124,59 +141,40 @@ function renderMultiplaDia() {
 
         sectionHtml += `
             <div style="margin-top: 20px; text-align: center;">
-                <button class="multipla-btn ${estilo}-btn">COPIAR ${titulo.toUpperCase()}</button>
+                <button class="multipla-btn ${estilo}-btn">COPIAR ${titulo.toUpperCase().replace(/ /g, '_')}</button>
             </div>
         `;
         sectionHtml += `</div>`;
         return sectionHtml;
     };
 
-    htmlContent += renderMultiplaSection("Múltipla FÁCIL", oddFacil, "Baixo Risco: Foco em Under 2.5 Gols.", multiplaFacil, "facil");
-    htmlContent += renderMultiplaSection("Múltipla MEDIANA", oddMediana, "Risco Moderado: Equilíbrio entre BTTS e Overs.", multiplaMediana, "mediana");
-    htmlContent += renderMultiplaSection("Múltipla OUSADA", oddOusada, "Alto Risco: Palpites arriscados em Overs.", multiplaOusada, "ousada");
+    // Renderiza Futebol
+    htmlContent += renderMultiplaSection("Múltipla FÁCIL", oddFacil.toFixed(2), "Baixo Risco: Foco em Under 2.5 Gols.", multiplaFacil, "facil", 'Futebol');
+    htmlContent += renderMultiplaSection("Múltipla MEDIANA", oddMediana.toFixed(2), "Risco Moderado: Equilíbrio entre BTTS e Overs.", multiplaMediana, "mediana", ''); // Esporte vazio para não repetir o título
+    htmlContent += renderMultiplaSection("Múltipla OUSADA", oddOusada.toFixed(2), "Alto Risco: Palpites arriscados em Overs.", multiplaOusada, "ousada", '');
+    
+    // Renderiza NBA
+    htmlContent += renderMultiplaSection("Múltipla NBA - OVERS/UNDERS", oddNbaPontos, "Foco na alta pontuação dos times do dia.", multiplaNbaPontos, "mediana", 'NBA');
+    htmlContent += renderMultiplaSection("Múltipla NBA - HANDICAPS", oddNbaSpread, "Foco em Spreads com alta probabilidade de acerto.", multiplaNbaSpread, "ousada", '');
+
 
     multiplaLista.innerHTML = htmlContent;
 }
 
-// D) RENDERIZA A PÁGINA DEDICADA DA NBA
+// D) RENDERIZA A PÁGINA DEDICADA DA NBA (APENAS UM PLACEHOLDER SIMPLES)
 function renderNbaPage() {
     const nbaLista = document.getElementById('nbaLista');
     if (!nbaLista) return;
-
-    const allNbaGames = [
-        { nome: "Boston Celtics x Philadelphia 76ers", liga: "01:00 BRT", odds: [1.65, 2.25], palpite: "Celtics -4.5 Pontos" },
-        { nome: "Denver Nuggets x Golden State Warriors", liga: "23:30 BRT", odds: [1.35, 3.10], palpite: "Over 235.5 Pontos" },
-        { nome: "Phoenix Suns x Dallas Mavericks", liga: "21:00 BRT", odds: [1.70, 2.15], palpite: "Mavericks +3.5 Pontos" },
-    ];
-
-    let htmlContent = '<h2>🏀 Jogos da NBA (Moneyline / Spreads)</h2>';
     
-    allNbaGames.forEach(jogo => {
-        const [casa, fora] = jogo.nome.split(' x ');
-        
-        htmlContent += `
-            <div class="jogo-card nba-item" style="border-left: 5px solid #ff9800;" data-game-id="${jogo.nome}">
-                <div class="info">
-                    <strong>${casa} vs ${fora}</strong>
-                    <small>${jogo.liga}</small>
-                </div>
-                <div class="odds">
-                    <span class="odd-btn" style="background-color: var(--primary-color); color: #fff;" title="Vitória ${casa} (ML)">${jogo.odds[0].toFixed(2)}</span>
-                    <span class="odd-btn" style="background-color: var(--primary-color); color: #fff;" title="Vitória ${fora} (ML)">${jogo.odds[1].toFixed(2)}</span>
-                </div>
-                <div class="palpite-sugerido hidden"> 
-                    <p>🔥 Sugestão do Dia Camillo Bets:</p>
-                    <div class="palpite-box" style="background-color: #444;">
-                        <span class="palpite-desc">${jogo.palpite}</span>
-                        <span class="odd-final" style="color: var(--accent-color);">@ 1.90</span>
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-
+    const htmlContent = `
+        <div class="placeholder-content">
+            <h3>🏀 Palpites de NBA estão na seção "Múltipla Dia"!</h3>
+            <p>Para ver a análise completa de Over/Under e Handicaps de NBA, navegue até a seção Múltipla Dia no menu principal.</p>
+        </div>
+    `;
     nbaLista.innerHTML = htmlContent;
 }
+
 
 // E) RENDERIZA A PÁGINA BINGO (Placeholder)
 function renderBingoPage() {
@@ -203,8 +201,6 @@ function setupGameCardToggle() {
     
     const addToggleListener = (container) => {
         if (!container) return;
-        // Adiciona o event listener ao container PAI (jogosLista ou nbaLista)
-        // Isso é mais eficiente e funciona mesmo se os cards forem criados dinamicamente
         container.addEventListener('click', (e) => {
             const card = e.target.closest('.jogo-card');
             if (!card) return; 
@@ -215,7 +211,6 @@ function setupGameCardToggle() {
         });
     };
     
-    // Aplica o toggle nos containers de cards
     addToggleListener(jogosLista);
     addToggleListener(nbaLista);
 }
@@ -233,7 +228,6 @@ function setupNavigation() {
             if (!pageId) return; 
             e.preventDefault();
             
-            // Tratamento especial para a Área VIP
             if (pageId === 'vip-login') {
                 handleVipAreaClick(link);
                 return;
@@ -264,7 +258,7 @@ function handleVipAreaClick(navLink) {
     if (isLoggedIn) {
         if (conteudoVipSection) {
             conteudoVipSection.style.display = 'block';
-            renderVipContent(); // <-- CHAMA O CONTEÚDO VIP
+            renderVipContent();
         }
     } else {
         if (loginSection) loginSection.style.display = 'block';
@@ -288,7 +282,7 @@ function setupVipArea() {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
-        // CHECK DE CREDENCIAIS (Antiga + Nova)
+        // CHECK DE CREDENCIAIS
         const loginSuccess = (
             (username === 'camillo' && password === 'bets2025') ||
             (username === 'camillo22' && password === '19032011') 
@@ -298,13 +292,12 @@ function setupVipArea() {
             localStorage.setItem('isLoggedIn', 'true');
             loginErro.style.display = 'none';
             showPage('vip-content'); 
-            renderVipContent(); // <-- CHAMA O CONTEÚDO VIP APÓS LOGIN
+            renderVipContent();
         } else {
             loginErro.style.display = 'block';
         }
     });
 
-    // Tenta carregar o conteúdo VIP se o usuário já estiver logado
     const vipLink = document.querySelector('[data-page="vip-login"]');
     if (vipLink && localStorage.getItem('isLoggedIn') === 'true') {
         renderVipContent(); 
@@ -316,7 +309,6 @@ function renderVipContent() {
     const vipContentSection = document.getElementById('vip-content'); 
     if (!vipContentSection) return;
 
-    // Conteúdo VIP Premium (Palpite do dia)
     const palpitePremium = `
         <div class="vip-article section-card" style="border-left: 5px solid var(--accent-color);">
             <h3 style="color: var(--primary-color); border-bottom: 1px dashed var(--bg-card); padding-bottom: 10px;">💎 Palpite Premium de Hoje:</h3>
@@ -329,7 +321,6 @@ function renderVipContent() {
         </div>
     `;
 
-    // Conteúdo do Manual de Ouro
     const manualDeOuro = `
         <div class="vip-article section-card" style="margin-top: 20px;">
             <h2 style="color: var(--primary-color); border-bottom: 2px solid var(--primary-color);">👑 MANUAL DE OURO: Gestão de Banca</h2>
@@ -370,14 +361,12 @@ function renderVipContent() {
         </div>
     `;
 
-    // Atualiza a seção #vip-content com o novo conteúdo
     vipContentSection.innerHTML = `
         ${palpitePremium}
         ${manualDeOuro}
         <button class="logout" id="logoutBtn" style="margin-top: 30px;">Sair da Área VIP</button>
     `;
 
-    // É CRÍTICO re-adicionar o listener de logout após recriar o botão
     document.getElementById('logoutBtn').addEventListener('click', () => {
         localStorage.removeItem('isLoggedIn');
         document.querySelectorAll('.page-content').forEach(page => page.style.display = 'none');
