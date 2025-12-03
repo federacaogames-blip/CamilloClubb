@@ -1,25 +1,20 @@
 /* =======================================================
-   1. PALETA DE CORES (PSICOLOGIA DAS CORES: CONFIANÇA E RIQUEZA)
+   1. PALETA DE CORES (Versão Funcional/Padrão)
    ======================================================= */
 
 :root {
-    /* Cores Primárias (Base: Confiança/Profissionalismo) */
-    --cor-fundo: #1A237E;         /* Azul Marinho Profundo (Deep Indigo) */
-    --cor-card-fundo: #FFFFFF;    /* Branco puro para o fundo dos cards de jogos */
-    --cor-texto-principal: #333333; /* Texto escuro para contraste no fundo claro do card */
-    --cor-texto-claro: #FFFFFF;   /* Texto branco para contraste no fundo escuro */
+    --cor-fundo: #f4f4f9;         /* Cinza Claro */
+    --cor-card-fundo: #FFFFFF;    /* Branco Puro */
+    --cor-texto-principal: #333333; /* Cinza Escuro */
+    --cor-texto-claro: #FFFFFF;   /* Branco */
     
-    /* Cores de Destaque e Ação (Sucesso/Riqueza) */
-    --cor-destaque: #FFD700;      /* Dourado/Amarelo Ouro (Ação, Lucro, Prestígio) */
-    --cor-secundaria: #009688;    /* Verde Esmeralda/Teal (Ganhos, Estabilidade) */
+    --cor-destaque: #007bff;      /* Azul Padrão (Destaque) */
+    --cor-secundaria: #28a745;    /* Verde (Ganhos/Sucesso) */
+    --cor-alerta: #dc3545;        /* Vermelho (Risco) */
 
-    /* Cores de Alerta (Risco/Urgência) */
-    --cor-alerta: #E53935;        /* Vermelho/Deep Red */
-
-    /* Cores para os Botões das Múltiplas */
-    --cor-facil: #009688;         /* Verde Esmeralda */
-    --cor-mediana: #FFC107;       /* Amarelo/Âmbar (Variação do dourado) */
-    --cor-ousada: #E53935;        /* Vermelho */
+    --cor-facil: #28a745;
+    --cor-mediana: #ffc107;
+    --cor-ousada: #dc3545;
 }
 
 /* =======================================================
@@ -29,7 +24,7 @@
 body {
     font-family: 'Arial', sans-serif;
     background-color: var(--cor-fundo);
-    color: var(--cor-texto-claro);
+    color: var(--cor-texto-principal);
     margin: 0;
     padding: 0;
 }
@@ -38,16 +33,16 @@ body {
     max-width: 90%;
     margin: 20px auto;
     padding: 20px;
-    background-color: rgba(0, 0, 0, 0.1); 
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    background-color: #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 h1, h2, h3 {
-    color: var(--cor-destaque); 
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    color: var(--cor-destaque);
+    border-bottom: 2px solid #ccc;
     padding-bottom: 10px;
-    margin-top: 25px;
+    margin-top: 20px;
 }
 
 /* =======================================================
@@ -55,7 +50,7 @@ h1, h2, h3 {
    ======================================================= */
 
 .header {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--cor-card-fundo);
     padding: 15px 0;
     border-bottom: 3px solid var(--cor-destaque);
     text-align: center;
@@ -64,21 +59,21 @@ h1, h2, h3 {
 .nav {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 15px;
 }
 
 .nav-item {
     padding: 10px 15px;
-    color: var(--cor-texto-claro);
+    color: var(--cor-texto-principal);
     text-decoration: none;
     font-weight: bold;
     border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s;
 }
 
 .nav-item:hover, .nav-item.active {
-    background-color: var(--cor-secundaria); 
-    color: var(--cor-fundo);
+    background-color: var(--cor-destaque);
+    color: var(--cor-texto-claro);
 }
 
 /* =======================================================
@@ -86,46 +81,24 @@ h1, h2, h3 {
    ======================================================= */
 
 .jogo-card, .multipla-item, .nba-item {
-    background-color: var(--cor-card-fundo); 
-    color: var(--cor-texto-principal); 
+    background-color: var(--cor-card-fundo);
+    color: var(--cor-texto-principal);
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 6px;
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
-}
-
-.jogo-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px var(--cor-destaque), 0 0 5px var(--cor-destaque); 
-}
-
-.jogo-card .info strong {
-    color: var(--cor-fundo); 
-}
-
-.jogo-card small {
-    display: block;
-    color: #666;
-    font-size: 0.8em;
-}
-
-.odds {
-    display: flex;
-    gap: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .odd-btn {
-    background-color: var(--cor-destaque); 
-    color: var(--cor-fundo); 
+    background-color: var(--cor-destaque);
+    color: var(--cor-texto-claro);
     padding: 6px 10px;
-    border-radius: 5px;
+    border-radius: 3px;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.2s;
 }
 
 .palpite-sugerido {
@@ -137,23 +110,14 @@ h1, h2, h3 {
     width: 100%;
     box-sizing: border-box;
     display: none; 
+}
+.palpite-sugerido.hidden {
+    display: flex; 
     flex-direction: column;
     gap: 5px;
 }
-
-.palpite-sugerido.hidden {
-    display: flex; /* Exibe quando a classe 'hidden' é removida */
-}
-
-.palpite-box {
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-}
-
 .odd-final {
-    background-color: var(--cor-destaque);
-    color: var(--cor-fundo);
+    background-color: var(--cor-alerta);
     padding: 2px 8px;
     border-radius: 3px;
     margin-left: 10px;
@@ -162,146 +126,76 @@ h1, h2, h3 {
 /* =======================================================
    5. MÚLTIPLAS E BINGO
    ======================================================= */
-
 .multipla-section {
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 20px;
-    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 8px;
     margin-bottom: 20px;
-    background-color: rgba(255, 255, 255, 0.1); 
 }
 
-.facil-card { border-left: 5px solid var(--cor-facil); }
-.mediana-card { border-left: 5px solid var(--cor-mediana); }
-.ousada-card { border-left: 5px solid var(--cor-ousada); }
-
-.facil, .facil-btn { color: var(--cor-facil); }
-.mediana, .mediana-btn { color: var(--cor-mediana); }
-.ousada, .ousada-btn { color: var(--cor-ousada); }
-
-.multipla-btn, .bingo-btn {
-    padding: 10px 20px;
+.multipla-btn {
+    padding: 10px 15px;
     border: none;
     border-radius: 5px;
     font-weight: bold;
     cursor: pointer;
-    color: var(--cor-fundo);
-    transition: opacity 0.3s;
+    color: var(--cor-texto-claro);
+    margin-top: 10px;
 }
 
-.multipla-btn.facil-btn { background-color: var(--cor-facil); }
-.multipla-btn.mediana-btn { background-color: var(--cor-mediana); }
-.multipla-btn.ousada-btn, .bingo-btn { background-color: var(--cor-ousada); }
+.facil-btn { background-color: var(--cor-facil); }
+.mediana-btn { background-color: var(--cor-mediana); color: #333; }
+.ousada-btn { background-color: var(--cor-ousada); }
 
+.facil { color: var(--cor-facil); }
+.mediana { color: var(--cor-mediana); }
+.ousada { color: var(--cor-ousada); }
 
-/* =======================================================
-   6. ÁREA VIP (LOGIN E CONTEÚDO)
-   ======================================================= */
+/* ODD DO DIA BOX */
+#oddDoDiaBox {
+    background-color: #ffe0b2; /* Amarelo claro */
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+}
 
+/* PLACEHOLDERS */
+.placeholder-content {
+    background-color: #fff3cd; /* Amarelo pastel */
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px dashed #ffc107;
+}
+
+/* LOGIN VIP (Básico) */
 .login-container {
     max-width: 400px;
     margin: 50px auto;
-    padding: 30px;
     text-align: center;
-    background-color: rgba(255, 255, 255, 0.95);
-    color: var(--cor-texto-principal);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    background-color: var(--cor-card-fundo);
+    border-radius: 8px;
 }
-
-.login-form input[type="text"], 
-.login-form input[type="password"] {
+.login-form input {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     margin: 10px 0;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-    background-color: #f9f9f9;
+    border-radius: 4px;
 }
-
 .login-form button {
-    background-color: var(--cor-destaque);
-    color: var(--cor-fundo);
-    padding: 12px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
+    background-color: var(--cor-secundaria);
     width: 100%;
-    margin-top: 15px;
+    margin-top: 10px;
 }
-
 #loginErro {
     color: var(--cor-alerta);
-    background-color: rgba(229, 57, 53, 0.1);
-    border: 1px solid var(--cor-alerta);
+    background-color: #f8d7da;
     padding: 10px;
     border-radius: 5px;
     margin-top: 10px;
-    font-weight: bold;
-}
-
-
-/* Estilos Específicos para o conteúdo do Manual de Ouro */
-
-.vip-article {
-    background-color: #f8f8f8; 
-    color: #333; 
-    padding: 30px;
-    border-radius: 10px;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
-.vip-article h2, .vip-article h3 {
-    color: #1A237E; 
-    border-bottom: 2px solid #FFD700; 
-    padding-bottom: 5px;
-    margin-top: 25px;
-}
-
-.vip-article ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-.vip-article ul li {
-    padding: 5px 0;
-    border-left: 3px solid #009688; 
-    padding-left: 10px;
-    margin-bottom: 8px;
-}
-
-.table-responsive {
-    overflow-x: auto;
-}
-
-.vip-article table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 15px 0;
-    font-size: 0.9em;
-}
-
-.vip-article th, .vip-article td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-}
-
-.vip-article thead th {
-    background-color: #1A237E; 
-    color: white;
-    font-weight: bold;
-}
-
-.vip-quote {
-    background-color: #FFD700; 
-    color: #1A237E; 
-    padding: 15px;
-    border-left: 5px solid #E53935; 
-    border-radius: 5px;
-    font-style: italic;
-    margin: 20px 0;
     font-weight: bold;
 }
