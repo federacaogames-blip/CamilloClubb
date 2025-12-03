@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderJogosDoDia();
     renderOddDoDia();
     renderNbaPage(); 
-    renderMultiplaDia(); 
+    renderMultiplaDia(); // Agora só renderiza Futebol
     renderBingoPage(); 
     
     // 2. Configura a interatividade principal
@@ -71,7 +71,7 @@ function renderOddDoDia() {
     if (oddDiaDesc) oddDiaDesc.textContent = 'Palpite: Under 10.5 Corners';
 }
 
-// C) RENDERIZA AS MÚLTIPLAS (FUTEBOL E NBA)
+// C) RENDERIZA AS MÚLTIPLAS DE FUTEBOL (AGORA SÓ FUTEBOL)
 function renderMultiplaDia() {
     const multiplaLista = document.getElementById('multiplaLista');
     if (!multiplaLista) return;
@@ -98,30 +98,10 @@ function renderMultiplaDia() {
     ];
     const oddOusada = 21.56;
 
-    // --- MÚLTIPLAS NBA ---
+    let htmlContent = '<h2>⚽ Múltiplas de Futebol</h2>';
     
-    // MÚLTIPLA NBA 1: OVER/UNDER (PONTOS)
-    const multiplaNbaPontos = [
-        { nome: "OKC @ GSW (01:00)", liga: "Seleção: Over 223.5", odd: 1.88, justificativa: "Ambas as equipes veem Over em 24-18 combinados. Modelos projetam 225+." },
-        { nome: "POR @ CLE (21:00)", liga: "Seleção: Over 232.5", odd: 1.91, justificativa: "CLE em ritmo alto em casa. POR com overs em 7/10 road games." },
-        { nome: "DEN @ IND (21:00)", liga: "Seleção: Over 237.5", odd: 1.85, justificativa: "DEN e IND top-10 em pace; overs em 6/8 H2H recentes." },
-    ];
-    const oddNbaPontos = (1.88 * 1.91 * 1.85).toFixed(2);
-    
-    // MÚLTIPLA NBA 2: HANDICAP (SPREADS)
-    const multiplaNbaSpread = [
-        { nome: "DET vs ATL (21:00)", liga: "Seleção: Pistons -9.5", odd: 1.91, justificativa: "DET 16-4, 13 streak home; ATL sem Young, back-to-back." },
-        { nome: "WAS vs MIL (21:00)", liga: "Seleção: Bucks -10.5", odd: 1.91, justificativa: "MIL 7 vitórias H2H; WAS pior defesa." },
-        { nome: "UTA vs HOU (23:00)", liga: "Seleção: Rockets -12.5", odd: 1.91, justificativa: "HOU 13-4, 5 streak road; UTA 29º DRTG." },
-    ];
-    const oddNbaSpread = (1.91 * 1.91 * 1.91).toFixed(2);
-
-
-    let htmlContent = '';
-    
-    const renderMultiplaSection = (titulo, oddTotal, descricao, data, estilo, tipoEsporte = 'Futebol') => {
+    const renderMultiplaSection = (titulo, oddTotal, descricao, data, estilo) => {
         let sectionHtml = `<div class="multipla-section">`;
-        sectionHtml += `<h2 style="color: var(--primary-color); margin-top: 30px;">${tipoEsporte}</h2>`; // Novo Título para separar esportes
         sectionHtml += `<h3 class="${estilo}">${titulo} (Odd Total: ${oddTotal})</h3>`;
         sectionHtml += `<p class="multipla-info" style="color: var(--text-muted);">${descricao}</p>`;
         
@@ -149,29 +129,74 @@ function renderMultiplaDia() {
     };
 
     // Renderiza Futebol
-    htmlContent += renderMultiplaSection("Múltipla FÁCIL", oddFacil.toFixed(2), "Baixo Risco: Foco em Under 2.5 Gols.", multiplaFacil, "facil", 'Futebol');
-    htmlContent += renderMultiplaSection("Múltipla MEDIANA", oddMediana.toFixed(2), "Risco Moderado: Equilíbrio entre BTTS e Overs.", multiplaMediana, "mediana", ''); // Esporte vazio para não repetir o título
-    htmlContent += renderMultiplaSection("Múltipla OUSADA", oddOusada.toFixed(2), "Alto Risco: Palpites arriscados em Overs.", multiplaOusada, "ousada", '');
+    htmlContent += renderMultiplaSection("Múltipla FÁCIL", oddFacil.toFixed(2), "Baixo Risco: Foco em Under 2.5 Gols.", multiplaFacil, "facil");
+    htmlContent += renderMultiplaSection("Múltipla MEDIANA", oddMediana.toFixed(2), "Risco Moderado: Equilíbrio entre BTTS e Overs.", multiplaMediana, "mediana");
+    htmlContent += renderMultiplaSection("Múltipla OUSADA", oddOusada.toFixed(2), "Alto Risco: Palpites arriscados em Overs.", multiplaOusada, "ousada");
     
-    // Renderiza NBA
-    htmlContent += renderMultiplaSection("Múltipla NBA - OVERS/UNDERS", oddNbaPontos, "Foco na alta pontuação dos times do dia.", multiplaNbaPontos, "mediana", 'NBA');
-    htmlContent += renderMultiplaSection("Múltipla NBA - HANDICAPS", oddNbaSpread, "Foco em Spreads com alta probabilidade de acerto.", multiplaNbaSpread, "ousada", '');
-
-
     multiplaLista.innerHTML = htmlContent;
 }
 
-// D) RENDERIZA A PÁGINA DEDICADA DA NBA (APENAS UM PLACEHOLDER SIMPLES)
+// D) RENDERIZA A PÁGINA DEDICADA DA NBA (AGORA COM MÚLTIPLAS DA NBA)
 function renderNbaPage() {
     const nbaLista = document.getElementById('nbaLista');
     if (!nbaLista) return;
+
+    // --- MÚLTIPLAS NBA ---
     
-    const htmlContent = `
-        <div class="placeholder-content">
-            <h3>🏀 Palpites de NBA estão na seção "Múltipla Dia"!</h3>
-            <p>Para ver a análise completa de Over/Under e Handicaps de NBA, navegue até a seção Múltipla Dia no menu principal.</p>
-        </div>
-    `;
+    // MÚLTIPLA NBA 1: OVER/UNDER (PONTOS)
+    const multiplaNbaPontos = [
+        { nome: "OKC @ GSW (01:00)", liga: "Seleção: Over 223.5", odd: 1.88, justificativa: "Ambas as equipes veem Over em 24-18 combinados. Modelos projetam 225+." },
+        { nome: "POR @ CLE (21:00)", liga: "Seleção: Over 232.5", odd: 1.91, justificativa: "CLE em ritmo alto em casa. POR com overs em 7/10 road games." },
+        { nome: "DEN @ IND (21:00)", liga: "Seleção: Over 237.5", odd: 1.85, justificativa: "DEN e IND top-10 em pace; overs em 6/8 H2H recentes." },
+    ];
+    const oddNbaPontos = (1.88 * 1.91 * 1.85).toFixed(2);
+    
+    // MÚLTIPLA NBA 2: HANDICAP (SPREADS)
+    const multiplaNbaSpread = [
+        { nome: "DET vs ATL (21:00)", liga: "Seleção: Pistons -9.5", odd: 1.91, justificativa: "DET 16-4, 13 streak home; ATL sem Young, back-to-back." },
+        { nome: "WAS vs MIL (21:00)", liga: "Seleção: Bucks -10.5", odd: 1.91, justificativa: "MIL 7 vitórias H2H; WAS pior defesa." },
+        { nome: "UTA vs HOU (23:00)", liga: "Seleção: Rockets -12.5", odd: 1.91, justificativa: "HOU 13-4, 5 streak road; UTA 29º DRTG." },
+    ];
+    const oddNbaSpread = (1.91 * 1.91 * 1.91).toFixed(2);
+
+
+    let htmlContent = '<h2>🏀 Múltiplas de NBA</h2>';
+    
+    const renderNbaMultiplaSection = (titulo, oddTotal, data, estilo) => {
+        // Usa 'ousada' para cor de destaque no NBA
+        const destaqueCor = estilo === 'ousada' ? 'var(--primary-color)' : 'var(--accent-color)';
+        const sectionHtml = `<div class="multipla-section">
+            <h3 style="color: ${destaqueCor}; border-left-color: ${destaqueCor} !important;">${titulo} (Odd Total: ${oddTotal})</h3>`;
+
+        data.forEach(jogo => {
+            sectionHtml += `
+                <div class="jogo-card multipla-item" style="border-left: 5px solid ${destaqueCor};">
+                    <div class="info">
+                        <strong>${jogo.nome}</strong>
+                        <small>${jogo.liga}</small>
+                    </div>
+                    <div class="odds">
+                        <span class="odd-btn" style="background-color: ${destaqueCor}; color: #000;">${jogo.odd.toFixed(2)}</span>
+                    </div>
+                    <div class="palpite-sugerido" style="max-height: 100px; padding-top: 10px; margin-top: 10px; opacity: 1;"> 
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">*Justificativa: ${jogo.justificativa}</p>
+                    </div>
+                </div>
+            `;
+        });
+
+        sectionHtml += `
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="multipla-btn" style="background-color: ${destaqueCor}; color: ${estilo === 'ousada' ? '#fff' : '#000'}; transition: transform 0.1s;">COPIAR ${titulo.toUpperCase().replace(/ /g, '_')}</button>
+            </div>
+        </div>`;
+        return sectionHtml;
+    };
+    
+    // Renderiza as Múltiplas da NBA
+    htmlContent += renderNbaMultiplaSection("Múltipla NBA - OVERS/UNDERS", oddNbaPontos, multiplaNbaPontos, "mediana");
+    htmlContent += renderNbaMultiplaSection("Múltipla NBA - HANDICAPS", oddNbaSpread, multiplaNbaSpread, "ousada");
+    
     nbaLista.innerHTML = htmlContent;
 }
 
@@ -201,18 +226,22 @@ function setupGameCardToggle() {
     
     const addToggleListener = (container) => {
         if (!container) return;
+        // Adiciona o event listener ao container PAI
         container.addEventListener('click', (e) => {
             const card = e.target.closest('.jogo-card');
             if (!card) return; 
-            const suggestion = card.querySelector('.palpite-sugerido');
-            if (suggestion) {
-                suggestion.classList.toggle('hidden');
+            // O toggle só deve funcionar para palpites de Futebol
+            if (card.querySelector('.palpite-box')) { 
+                const suggestion = card.querySelector('.palpite-sugerido');
+                if (suggestion) {
+                    suggestion.classList.toggle('hidden');
+                }
             }
         });
     };
     
     addToggleListener(jogosLista);
-    addToggleListener(nbaLista);
+    // Note: Não aplicamos o toggle na nbaLista pois as justificativas estão sempre visíveis agora.
 }
 
 function setupNavigation() {
