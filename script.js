@@ -1,258 +1,247 @@
-// --- CONFIGURAÇÃO DA NOVA API DE ESTATÍSTICAS (SPORTAPI7) ---
-const API_HOST_FUTEBOL = 'sportapi7.p.rapidapi.com';
-const BASE_URL_FUTEBOL = 'https://sportapi7.p.rapidapi.com';
-
-// --- CONFIGURAÇÃO DA API DA NBA FREE DATA (MANTIDA) ---
-const API_HOST_NBA = 'nba-api-free-data.p.rapidapi.com';
-const BASE_URL_NBA = 'https://nba-api-free-data.p.rapidapi.com';
-
-// Sua chave de API (USADA PARA RAPIDAPI)
-const API_KEY = '080ec70363mshf4bb5ff3cd88babp14b3d4jsn05e5bd4a7e31'; 
-
-// Exemplo de usuário/senha VIP
-const VIP_USER = 'camillovip';
-const VIP_PASS = 'melhoresodds2025'; 
-
-// --- FUNÇÃO CENTRAL DE FETCH (MANTIDA PARA RAPIDAPI) ---
-async function fetchFromAPI(host, endpoint, baseUrl, key, method = 'GET', body = null) {
-    const headers = {
-        'X-Rapidapi-Key': key,
-        'X-Rapidapi-Host': host,
-    };
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicializa o conteúdo ao carregar a página
+    renderJogosDoDia();
+    renderOddDoDia();
+    renderNbaPage();
+    renderMultiplaDia();
+    renderBingoPage(); // NOVO: RENDERIZA O CONTEÚDO DO BINGO
     
-    if (method === 'POST' && body) {
-        headers['Content-Type'] = 'application/x-www-form-urlencoded';
-    }
+    // Configura a navegação e o comportamento da Área VIP
+    setupNavigation(); 
+    setupVipArea();
+});
 
-    try {
-        const response = await fetch(`${baseUrl}${endpoint}`, {
-            method: method,
-            headers: headers,
-            body: body 
-        });
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}...`);
-        }
-        
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.indexOf("application/json") !== -1) {
-            return await response.json();
-        } else {
-            return await response.text();
-        }
+// =======================================================
+// Funções de Renderização de Conteúdo (Fictício)
+// =======================================================
 
-    } catch (error) {
-        console.error(`Erro na API (${host} - ${method}):`, error);
-        return { error: true, message: error.message }; 
-    }
-}
-
-
-// --- FUNÇÃO DE CARREGAMENTO DE JOGOS E ODDS (FICTÍCIAS/PALPITES) ---
-// MANTIDA IGUAL À VERSÃO ANTERIOR
-function carregarJogosFicticios() {
+// A) RENDERIZA OS PRINCIPAIS JOGOS DO DIA
+function renderJogosDoDia() {
     const jogosLista = document.getElementById('jogosLista');
-    
-    const jogosFicticios = [
-        { home: 'Arsenal', away: 'Tottenham', liga: 'Premier League', oddH: 1.80, oddD: 3.50, oddA: 4.10, date: '03/12 17:00' },
-        { home: 'Real Madrid', away: 'Barcelona', liga: 'La Liga', oddH: 2.10, oddD: 3.40, oddA: 3.00, date: '04/12 16:30' },
-        { home: 'Flamengo', away: 'Palmeiras', liga: 'Brasileirão', oddH: 2.30, oddD: 3.20, oddA: 2.80, date: '05/12 21:30' },
-        { home: 'Bayern', away: 'Dortmund', liga: 'Bundesliga', oddH: 1.50, oddD: 4.50, oddA: 5.50, date: '06/12 14:00' },
+    if (!jogosLista) return;
+
+    const jogosData = [
+        { nome: "Arsenal x Tottenham", liga: "Premier League - 03/12 15:00 (PALPITE)", odds: [1.8, 3.5, 4.1] },
+        { nome: "Real Madrid x Barcelona", liga: "La Liga - 04/12 16:30 (PALPITE)", odds: [2.1, 3.4, 3.0] },
+        { nome: "Flamengo x Palmeiras", liga: "Brasileirão - 05/12 21:00 (PALPITE)", odds: [2.3, 3.2, 2.8] },
+        { nome: "Bayern x Dortmund", liga: "Bundesliga - 05/12 14:00 (PALPITE)", odds: [1.5, 4.5, 5.5] },
     ];
 
-    let jogosHTML = '';
-    let oddDia = { jogo: 'Arsenal × Tottenham', odd: '1.80', desc: 'Vitória Simples do Arsenal (Palpite)' };
+    let htmlContent = '';
     
-    jogosFicticios.forEach((jogo, index) => {
-        const card = `
-        <div class="jogo-card" style="animation-delay: ${index * 0.1}s;">
-            <div class="info">
-                <strong>${jogo.home}</strong> × <strong>${jogo.away}</strong><br>
-                <small>${jogo.liga} - ${jogo.date} (PALPITE)</small>
+    jogosData.forEach(jogo => {
+        htmlContent += `
+            <div class="jogo-card">
+                <div class="info">
+                    <strong>${jogo.nome}</strong>
+                    <small>${jogo.liga}</small>
+                </div>
+                <div class="odds">
+                    <span class="odd-btn">${jogo.odds[0]}</span>
+                    <span class="odd-btn">${jogo.odds[1]}</span>
+                    <span class="odd-btn">${jogo.odds[2]}</span>
+                </div>
             </div>
-            <div class="odds">
-                <span title="Vitória ${jogo.home}">${jogo.oddH}</span>
-                <span title="Empate">${jogo.oddD}</span>
-                <span title="Vitória ${jogo.away}">${jogo.oddA}</span>
-            </div>
-        </div>`;
-        jogosHTML += card;
+        `;
     });
 
-    jogosLista.innerHTML = jogosHTML;
-    document.getElementById('oddDiaJogo').textContent = oddDia.jogo;
-    document.getElementById('oddDiaOdd').textContent = oddDia.odd;
-    document.getElementById('oddDiaDesc').textContent = oddDia.desc;
+    jogosLista.innerHTML = htmlContent;
 }
 
-// --- FUNÇÃO DE ESTATÍSTICAS DO FUTEBOL (USANDO SPORTAPI7) ---
+// B) RENDERIZA A ODD DO DIA
+function renderOddDoDia() {
+    const oddDiaOdd = document.getElementById('oddDiaOdd');
+    const oddDiaJogo = document.getElementById('oddDiaJogo');
+    const oddDiaDesc = document.getElementById('oddDiaDesc');
 
-async function buscarEstatisticasFutebol() {
-    console.log("-> Buscando Ratings de Jogador (SportAPI7)...");
-    
-    // Endpoint fornecido (assumindo que retorna as estatísticas que você precisa)
-    const endpoint = '/api/v1/player/817181/unique-tournament/132/season/65360/ratings'; 
-
-    const dados = await fetchFromAPI(
-        API_HOST_FUTEBOL, 
-        endpoint, 
-        BASE_URL_FUTEBOL, 
-        API_KEY,
-        'GET'
-    );
-
-    const estatisticasDadosDiv = document.getElementById('estatisticas-dados');
-    const estatisticasTimeSmall = document.getElementById('estatisticas-time');
-    
-    if (dados && !dados.error && dados.ratings && dados.ratings.length > 0) {
-        // Pegamos o primeiro rating para exibição
-        const rating = dados.ratings[0];
-        
-        estatisticasTimeSmall.textContent = `Stats de Jogador (ID: 817181)`; 
-        estatisticasDadosDiv.innerHTML = `
-            <div class="stat-item"><span>Status API</span> <strong>✅ Conectado</strong></div>
-            <div class="stat-item"><span>Rating Média</span> <strong>${rating.average}</strong></div>
-            <div class="stat-item"><span>Temporada</span> <strong>${dados.season.name}</strong></div>
-            <div class="stat-item"><span>Jogos Totais</span> <strong>${dados.count}</strong></div>
-        `;
-        console.log("✅ Dados da SportAPI7 Recebidos.");
-    } else {
-        estatisticasTimeSmall.textContent = `SportAPI: Falha/Cota`;
-        estatisticasDadosDiv.innerHTML = `<div class="stat-item"><span>Status</span> <strong>❌ Erro/Cota</strong></div>`;
-        console.warn("SportAPI7 falhou. Cota esgotada ou sem dados.");
-    }
+    if (oddDiaOdd) oddDiaOdd.textContent = '1.80';
+    if (oddDiaJogo) oddDiaJogo.textContent = 'Arsenal x Tottenham';
+    if (oddDiaDesc) oddDiaDesc.textContent = 'Vitória Simples do Arsenal (Palpite)';
 }
 
+// C) RENDERIZA A PÁGINA MÚLTIPLA DO DIA (Fictício)
+function renderMultiplaDia() {
+    const multiplaLista = document.getElementById('multiplaLista');
+    if (!multiplaLista) return;
 
-// --- INTEGRAÇÃO DA API DA NBA FREE DATA (MANTIDA) ---
-
-async function buscarEstatisticasNBA() {
-    console.log("-> Buscando Estatísticas da NBA (Free Data)...");
-    const endpoint = "/nba-atlantic-team-list"; 
+    const multiplaData = [
+        { nome: "Corinthians x Santos", liga: "Brasileirão - Palpite: Mais de 1.5 Gols", odds: [1.45] },
+        { nome: "PSG x Lyon", liga: "Ligue 1 - Palpite: Ambos Marcam", odds: [1.70] },
+    ];
     
-    const dados = await fetchFromAPI(
-        API_HOST_NBA, 
-        endpoint, 
-        BASE_URL_NBA, 
-        API_KEY,
-        'GET' 
-    );
+    let htmlContent = '<h3>Palpites da Múltipla (Odd Total: 2.46)</h3>';
     
-    const mainContentWrapper = document.getElementById('main-content-wrapper');
-
-    if (dados && !dados.error && dados.teams && dados.teams.length > 0) {
-        const primeiroTime = dados.teams[0];
-
-        const nbaSectionHTML = `
-            <section id="nba-stats" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
-                <h2>🏀 Times da Divisão Atlantic (NBA)</h2>
-                <div class="highlight-card">
-                    <h3>Primeiro Time Listado</h3>
-                    <p>Nome: <strong>${primeiroTime.name}</strong></p>
-                    <p>Cidade: <strong>${primeiroTime.city}</strong></p>
-                    <small>Dados fornecidos pela NBA-API-Free-Data.</small>
+    multiplaData.forEach(jogo => {
+        htmlContent += `
+            <div class="jogo-card multipla-item">
+                <div class="info">
+                    <strong>${jogo.nome}</strong>
+                    <small>${jogo.liga}</small>
                 </div>
-            </section>
+                <div class="odds">
+                    <span class="odd-btn">${jogo.odds[0]}</span>
+                </div>
+            </div>
         `;
-        mainContentWrapper.insertAdjacentHTML('beforeend', nbaSectionHTML);
+    });
+
+    multiplaLista.innerHTML = htmlContent;
+}
+
+// D) RENDERIZA A PÁGINA DEDICADA DA NBA (Fictício)
+function renderNbaPage() {
+    const nbaLista = document.getElementById('nbaLista');
+    if (!nbaLista) return;
+
+    const nbaData = [
+        { nome: "Lakers x Celtics", liga: "NBA - 03/12 21:30 (Palpite: LAL ML)", odds: [1.85, 1.95] },
+        { nome: "Bulls x Heat", liga: "NBA - 04/12 20:00 (Palpite: Under 220.5)", odds: [1.78, 2.02] },
+        { nome: "Grizzlies x Warriors", liga: "NBA - 04/12 23:00 (Palpite: GS Warriors ML)", odds: [1.60, 2.20] },
+    ];
+
+    let htmlContent = '';
+    
+    nbaData.forEach(jogo => {
+        htmlContent += `
+            <div class="jogo-card nba-item">
+                <div class="info">
+                    <strong>${jogo.nome}</strong>
+                    <small>${jogo.liga}</small>
+                </div>
+                <div class="odds">
+                    <span class="odd-btn odd-home">${jogo.odds[0]}</span>
+                    <span class="odd-btn odd-away">${jogo.odds[1]}</span>
+                </div>
+            </div>
+        `;
+    });
+
+    nbaLista.innerHTML = htmlContent;
+}
+
+// E) RENDERIZA A PÁGINA BINGO (Fictício)
+function renderBingoPage() {
+    const bingoContent = document.getElementById('bingoContent');
+    if (!bingoContent) return;
+
+    // Conteúdo fictício para a página Bingo
+    const bingoHtml = `
+        <div class="bingo-card" style="background-color: #333; padding: 20px; border-radius: 8px; text-align: center;">
+            <h3 style="color: #00ff00; margin-bottom: 10px; font-size: 1.5rem;">Próximo Sorteio: 22:00 BRT</h3>
+            <p style="font-size: 1.2rem;">Seu número da sorte: <strong style="color: #ff0000; font-size: 2rem;">B-7</strong></p>
+            <p style="margin-top: 10px;">Último Prêmio: <strong>R$ 500,00</strong> em créditos.</p>
+        </div>
+        <div style="margin-top: 30px; text-align: center;">
+            <p style="margin-bottom: 15px;">Clique no botão abaixo para participar!</p>
+            <button class="bingo-btn" style="background-color: #00ff00; color: #000; padding: 15px 30px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: background-color 0.2s;">PARTICIPAR DO BINGO</button>
+        </div>
+    `;
+
+    bingoContent.innerHTML = bingoHtml;
+}
+
+
+// =======================================================
+// Funções de Navegação e Área VIP
+// =======================================================
+
+function setupNavigation() {
+    const navLinks = document.querySelectorAll('.nav-item');
+    
+    // Função para esconder todas as páginas e desativar todos os links
+    const hideAllPages = () => {
+        document.querySelectorAll('.page-content').forEach(page => page.style.display = 'none');
+        navLinks.forEach(link => link.classList.remove('active'));
+    };
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            const pageId = link.getAttribute('data-page');
+
+            // Ignora links sem data-page (Odd do Dia é uma âncora)
+            if (!pageId) return; 
+
+            e.preventDefault();
+            
+            // Lógica para Área VIP: precisa verificar se está logado
+            if (pageId === 'vip-login') {
+                handleVipAreaClick(link);
+                return;
+            }
+
+            // Lógica para outras páginas
+            hideAllPages();
+
+            // Ativa o link clicado
+            link.classList.add('active');
+            
+            // Mostra a página correspondente
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.style.display = 'block';
+            }
+        });
+    });
+}
+
+function handleVipAreaClick(navLink) {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const loginSection = document.getElementById('vip-login');
+    const conteudoVipSection = document.getElementById('vip-content');
+
+    const hideAllPages = () => {
+        document.querySelectorAll('.page-content').forEach(page => page.style.display = 'none');
+        document.querySelectorAll('.nav-item').forEach(link => link.classList.remove('active'));
+    };
+    
+    hideAllPages();
+    navLink.classList.add('active');
+
+    if (isLoggedIn) {
+        // Se logado, mostra o conteúdo VIP
+        if (conteudoVipSection) conteudoVipSection.style.display = 'block';
     } else {
-        const nbaErrorHTML = `
-            <section id="nba-stats" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
-                <h2>🏀 Destaques da NBA</h2>
-                <p style="color: #ff5555; text-align: center;">Não foi possível carregar os dados da NBA. Cota esgotada ou erro de conexão.</p>
-            </section>
-        `;
-        mainContentWrapper.insertAdjacentHTML('beforeend', nbaErrorHTML);
+        // Se não logado, mostra o formulário de login
+        if (loginSection) loginSection.style.display = 'block';
     }
 }
 
 
-// --- LÓGICA VIP E CARREGAMENTO (MANTIDA IGUAL) ---
-const navVipLink = document.getElementById('nav-vip-link');
-const loginSection = document.getElementById('login-vip');
-const conteudoPadrao = document.getElementById('conteudo-padrao');
-const conteudoVip = document.getElementById('conteudo-vip');
-const loginForm = document.getElementById('loginForm');
-const loginErro = document.getElementById('loginErro');
-const logoutBtn = document.getElementById('logoutBtn');
-
-// ... (Restante da lógica VIP omitida por brevidade, mantendo-se a mesma) ...
-
-navVipLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (sessionStorage.getItem('isLoggedIn') === 'true') {
-        mostrarConteudoVip(true);
-    } else {
-        mostrarConteudoVip(false);
-        loginSection.style.display = 'block';
-        conteudoPadrao.style.display = 'none';
-    }
-    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-    navVipLink.classList.add('active');
-});
-
-loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const user = document.getElementById('username').value;
-    const pass = document.getElementById('password').value;
-
-    if (user === VIP_USER && pass === VIP_PASS) {
-        sessionStorage.setItem('isLoggedIn', 'true');
-        loginErro.style.display = 'none';
-        mostrarConteudoVip(true);
-    } else {
-        loginErro.style.display = 'block';
-    }
-});
-
-logoutBtn.addEventListener('click', () => {
-    sessionStorage.removeItem('isLoggedIn');
-    mostrarConteudoVip(false);
-    loginSection.style.display = 'block';
-    conteudoVip.style.display = 'none';
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-});
-
-function mostrarConteudoVip(estaLogado) {
-    loginSection.style.display = 'none';
-    conteudoVip.style.display = 'none';
-    conteudoPadrao.style.display = 'none';
+function setupVipArea() {
+    const loginForm = document.getElementById('loginForm');
+    const loginErro = document.getElementById('loginErro');
+    const logoutBtn = document.getElementById('logoutBtn');
     
-    if (estaLogado) {
-        conteudoVip.style.display = 'flex';
-    } else {
-        conteudoPadrao.style.display = 'block';
-        navVipLink.classList.remove('active');
-        const primeiroLink = document.querySelector('nav a:first-child');
-        if (primeiroLink) {
-             primeiroLink.classList.add('active');
+    if (!loginForm || !logoutBtn) return;
+    
+    const showPage = (pageId) => {
+        document.querySelectorAll('.page-content').forEach(page => page.style.display = 'none');
+        const targetPage = document.getElementById(pageId);
+        if (targetPage) targetPage.style.display = 'block';
+    };
+
+    // Ação do login
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Simulação de credenciais
+        if (username === 'camillo' && password === 'bets2025') {
+            localStorage.setItem('isLoggedIn', 'true');
+            loginErro.style.display = 'none';
+            showPage('vip-content'); // Vai para o conteúdo VIP
+        } else {
+            loginErro.style.display = 'block';
         }
-    }
+    });
+
+    // Ação do logout
+    logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('isLoggedIn');
+        // Redireciona para a página de jogos do dia após o logout
+        showPage('jogos-dia');
+        document.querySelector('[data-page="jogos-dia"]').classList.add('active');
+        document.querySelector('[data-page="vip-login"]').classList.remove('active');
+    });
 }
-
-// 4. Carrega tudo ao iniciar
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Odds/Palpites Fictícios
-    carregarJogosFicticios(); 
-
-    // 2. Estatísticas de Futebol (AGORA USANDO SPORTAPI7)
-    buscarEstatisticasFutebol(); 
-    
-    // 3. Estatísticas de Basquete (NBA Free Data)
-    buscarEstatisticasNBA();
-
-    // Lógica VIP
-    mostrarConteudoVip(false); 
-
-    if (sessionStorage.getItem('isLoggedIn') === 'true') {
-         mostrarConteudoVip(true); 
-         navVipLink.classList.add('active');
-         const primeiroLink = document.querySelector('nav a:first-child');
-         if (primeiroLink) {
-             primeiroLink.classList.remove('active');
-         }
-    }
-});
