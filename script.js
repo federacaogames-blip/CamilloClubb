@@ -1,13 +1,13 @@
-// --- CONFIGURAÇÃO DA NOVA API DE ESTATÍSTICAS (SOCCERSAPI) ---
-const SOCCERSAPI_USER = 'i2SEG';
-const SOCCERSAPI_TOKEN = '9GCBipYN1E';
-const BASE_URL_SOCCERSAPI = `https://api.soccersapi.com/v2.2`;
-const SOCCERSAPI_AUTH = `?user=${SOCCERSAPI_USER}&token=${SOCCERSAPI_TOKEN}`;
+// --- CONFIGURAÇÃO DA NOVA API DE ESTATÍSTICAS (SPORTAPI7) ---
+const API_HOST_FUTEBOL = 'sportapi7.p.rapidapi.com';
+const BASE_URL_FUTEBOL = 'https://sportapi7.p.rapidapi.com';
 
 // --- CONFIGURAÇÃO DA API DA NBA FREE DATA (MANTIDA) ---
 const API_HOST_NBA = 'nba-api-free-data.p.rapidapi.com';
 const BASE_URL_NBA = 'https://nba-api-free-data.p.rapidapi.com';
-const API_KEY = '080ec70363mshf4bb5ff3cd88babp14b3d4jsn05e5bd4a7e31'; // Sua chave RapidAPI
+
+// Sua chave de API (USADA PARA RAPIDAPI)
+const API_KEY = '080ec70363mshf4bb5ff3cd88babp14b3d4jsn05e5bd4a7e31'; 
 
 // Exemplo de usuário/senha VIP
 const VIP_USER = 'camillovip';
@@ -15,7 +15,6 @@ const VIP_PASS = 'melhoresodds2025';
 
 // --- FUNÇÃO CENTRAL DE FETCH (MANTIDA PARA RAPIDAPI) ---
 async function fetchFromAPI(host, endpoint, baseUrl, key, method = 'GET', body = null) {
-    // ... (Esta função é mantida, mas agora é usada apenas pela NBA API) ...
     const headers = {
         'X-Rapidapi-Key': key,
         'X-Rapidapi-Host': host,
@@ -52,11 +51,10 @@ async function fetchFromAPI(host, endpoint, baseUrl, key, method = 'GET', body =
 
 
 // --- FUNÇÃO DE CARREGAMENTO DE JOGOS E ODDS (FICTÍCIAS/PALPITES) ---
-
+// MANTIDA IGUAL À VERSÃO ANTERIOR
 function carregarJogosFicticios() {
     const jogosLista = document.getElementById('jogosLista');
     
-    // Dados de jogos e palpites que você mesmo irá gerenciar
     const jogosFicticios = [
         { home: 'Arsenal', away: 'Tottenham', liga: 'Premier League', oddH: 1.80, oddD: 3.50, oddA: 4.10, date: '03/12 17:00' },
         { home: 'Real Madrid', away: 'Barcelona', liga: 'La Liga', oddH: 2.10, oddD: 3.40, oddA: 3.00, date: '04/12 16:30' },
@@ -67,7 +65,6 @@ function carregarJogosFicticios() {
     let jogosHTML = '';
     let oddDia = { jogo: 'Arsenal × Tottenham', odd: '1.80', desc: 'Vitória Simples do Arsenal (Palpite)' };
     
-    // ... (Construção dos cards HTML mantida igual) ...
     jogosFicticios.forEach((jogo, index) => {
         const card = `
         <div class="jogo-card" style="animation-delay: ${index * 0.1}s;">
@@ -90,48 +87,41 @@ function carregarJogosFicticios() {
     document.getElementById('oddDiaDesc').textContent = oddDia.desc;
 }
 
-// --- FUNÇÃO DE ESTATÍSTICAS DO FUTEBOL (USANDO SOCCERSAPI) ---
+// --- FUNÇÃO DE ESTATÍSTICAS DO FUTEBOL (USANDO SPORTAPI7) ---
 
 async function buscarEstatisticasFutebol() {
-    console.log("-> Buscando Ligas de Futebol (SoccersAPI)...");
+    console.log("-> Buscando Ratings de Jogador (SportAPI7)...");
     
-    // Endpoint para buscar a lista de ligas
-    const endpoint = `/leagues/${SOCCERSAPI_AUTH}&t=list`; 
+    // Endpoint fornecido (assumindo que retorna as estatísticas que você precisa)
+    const endpoint = '/api/v1/player/817181/unique-tournament/132/season/65360/ratings'; 
 
-    try {
-        const response = await fetch(`${BASE_URL_SOCCERSAPI}${endpoint}`);
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-        const dados = await response.json();
+    const dados = await fetchFromAPI(
+        API_HOST_FUTEBOL, 
+        endpoint, 
+        BASE_URL_FUTEBOL, 
+        API_KEY,
+        'GET'
+    );
+
+    const estatisticasDadosDiv = document.getElementById('estatisticas-dados');
+    const estatisticasTimeSmall = document.getElementById('estatisticas-time');
+    
+    if (dados && !dados.error && dados.ratings && dados.ratings.length > 0) {
+        // Pegamos o primeiro rating para exibição
+        const rating = dados.ratings[0];
         
-        const estatisticasDadosDiv = document.getElementById('estatisticas-dados');
-        const estatisticasTimeSmall = document.getElementById('estatisticas-time');
-
-        if (dados && dados.data && dados.data.length > 0) {
-            // Pegamos o nome da primeira liga para mostrar que a conexão funcionou
-            const primeiraLiga = dados.data[0];
-            
-            // Você pode mudar este HTML para exibir estatísticas como 'Gols', 'Escanteios' etc.
-            // assim que tiver os endpoints corretos (ex: /livescore)
-            estatisticasTimeSmall.textContent = `SoccersAPI: Conectado`; 
-            estatisticasDadosDiv.innerHTML = `
-                <div class="stat-item"><span>Status</span> <strong>✅ OK</strong></div>
-                <div class="stat-item"><span>1ª Liga</span> <strong>${primeiraLiga.name}</strong></div>
-                <div class="stat-item"><span>ID da Liga</span> <strong>${primeiraLiga.league_id}</strong></div>
-            `;
-            console.log("✅ Dados da SoccersAPI Recebidos. Primeira Liga:", primeiraLiga.name);
-        } else {
-            estatisticasTimeSmall.textContent = `SoccersAPI: Sucesso, mas sem dados`;
-            estatisticasDadosDiv.innerHTML = `<div class="stat-item"><span>Status</span> <strong>✅ Conexão OK</strong></div>`;
-        }
-
-    } catch (error) {
-        console.error(`Erro na SoccersAPI:`, error);
-        const estatisticasDadosDiv = document.getElementById('estatisticas-dados');
-        const estatisticasTimeSmall = document.getElementById('estatisticas-time');
-        estatisticasTimeSmall.textContent = `SoccersAPI: Erro ${error.message}`;
-        estatisticasDadosDiv.innerHTML = `<div class="stat-item"><span>Status</span> <strong>❌ Erro</strong></div>`;
+        estatisticasTimeSmall.textContent = `Stats de Jogador (ID: 817181)`; 
+        estatisticasDadosDiv.innerHTML = `
+            <div class="stat-item"><span>Status API</span> <strong>✅ Conectado</strong></div>
+            <div class="stat-item"><span>Rating Média</span> <strong>${rating.average}</strong></div>
+            <div class="stat-item"><span>Temporada</span> <strong>${dados.season.name}</strong></div>
+            <div class="stat-item"><span>Jogos Totais</span> <strong>${dados.count}</strong></div>
+        `;
+        console.log("✅ Dados da SportAPI7 Recebidos.");
+    } else {
+        estatisticasTimeSmall.textContent = `SportAPI: Falha/Cota`;
+        estatisticasDadosDiv.innerHTML = `<div class="stat-item"><span>Status</span> <strong>❌ Erro/Cota</strong></div>`;
+        console.warn("SportAPI7 falhou. Cota esgotada ou sem dados.");
     }
 }
 
@@ -142,7 +132,6 @@ async function buscarEstatisticasNBA() {
     console.log("-> Buscando Estatísticas da NBA (Free Data)...");
     const endpoint = "/nba-atlantic-team-list"; 
     
-    // Usando a função fetchFromAPI para a API RapidAPI
     const dados = await fetchFromAPI(
         API_HOST_NBA, 
         endpoint, 
@@ -244,13 +233,12 @@ function mostrarConteudoVip(estaLogado) {
     }
 }
 
-
 // 4. Carrega tudo ao iniciar
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Odds/Palpites Fictícios
     carregarJogosFicticios(); 
 
-    // 2. Estatísticas de Futebol (AGORA USANDO SOCCERSAPI)
+    // 2. Estatísticas de Futebol (AGORA USANDO SPORTAPI7)
     buscarEstatisticasFutebol(); 
     
     // 3. Estatísticas de Basquete (NBA Free Data)
