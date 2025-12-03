@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camillo Bets | Apostas Esportivas e Odds ao Vivo</title>
+    <title>Camillo Bets | Análises e Palpites de Alto Nível</title>
 
     <meta property="og:title" content="Camillo Bets - Melhores Odds de Futebol ao Vivo">
-    <meta property="og:description" content="Análise e palpites de futebol diários com odds ao vivo da Pinnacle.">
-    <meta property="og:image" content="https://via.placeholder.com/1200x630/e60000/ffffff?text=Camillo+Bets+Apostas">
-    <meta property="og:url" content="https://pt.wix.com/">
-    <meta property="og:type" content="website">
-
+    <meta property="og:description" content="Análise e palpites de futebol diários.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
@@ -19,76 +15,103 @@
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
-    <header>
-        <h1>CAMILLO BETS</h1>
-        <p>Análise de Odds e Palpites Esportivos de Alto Nível</p>
+    
+    <header class="header-site">
+        <div class="header-container">
+            <h1 class="logo-site">CAMILLO BETS</h1>
+            <nav class="main-nav" aria-label="Navegação Principal">
+                <a href="#" class="nav-item active" data-page="jogos-dia">JOGOS DO DIA</a>
+                <a href="#" class="nav-item" data-page="multipla-dia">MÚLTIPLA DO DIA</a>
+                <a href="#" class="nav-item" data-page="bingo">BINGO</a>           <a href="#" class="nav-item" data-page="nba">NBA</a>               <a href="#odd-dia-aside" class="nav-item">ODD DO DIA</a>
+                <a href="#" class="nav-item nav-vip" data-page="vip-login">ÁREA VIP</a> 
+            </nav>
+        </div>
     </header>
 
-    <nav aria-label="Navegação Principal">
-        <a href="#ao-vivo" class="active">Ao Vivo</a>
-        <a href="#pre-jogo">Pré-Jogo</a>
-        <a href="#estatisticas">Estatísticas</a>
-        <a href="#odd-dia">Odd do Dia</a>
-        <a href="#" id="nav-vip-link">Área VIP</a> 
-    </nav>
-
-    <div class="main-content">
-        <div class="container">
-            <main class="main jogos-lista-wrapper" id="main-content-wrapper"> 
+    <div class="site-wrapper">
+        <div class="content-container">
+            
+            <main class="main-content-area"> 
                 
-                <section id="conteudo-padrao">
-                    <h2>Principais Jogos do Dia</h2>
-                    <div id="jogosLista">
+                <section id="jogos-dia" class="section-card page-content active">
+                    <h2>⚽ Palpites Selecionados</h2>
+                    <div id="jogosLista" class="jogos-grid">
                         <div class="loading">
                             <div class="spinner"></div>
-                            <p>Carregando odds reais da Pinnacle...</p>
+                            <p>Carregando palpites...</p>
                         </div>
                     </div>
                 </section>
                 
-                <section id="login-vip" style="display: none;">
-                    <h2>Acesso VIP Camillo Bets</h2>
+                <section id="multipla-dia" class="section-card page-content" style="display: none;">
+                    <h2>💰 Múltipla Sugerida do Dia</h2>
+                    <p class="multipla-info">Aqui você encontrará a aposta múltipla mais lucrativa e segura, analisada pela equipe Camillo Bets!</p>
+                    <div id="multiplaLista" class="jogos-grid">
+                        <div class="placeholder-content">Carregando Múltipla...</div>
+                    </div>
+                </section>
+                
+                <section id="bingo" class="section-card page-content" style="display: none;">
+                    <h2>🎰 Jogo do Bingo Premiado</h2>
+                    <p class="multipla-info">Gire a roleta e ganhe prêmios exclusivos Camillo Bets!</p>
+                    <div id="bingoContent" class="jogos-grid">
+                        <div class="placeholder-content">O jogo do Bingo será carregado aqui.</div>
+                    </div>
+                </section>
+
+                <section id="nba" class="section-card page-content" style="display: none;">
+                    <h2>🏀 Destaques e Palpites da NBA</h2>
+                    <div id="nbaLista" class="jogos-grid">
+                        <div class="placeholder-content">Carregando jogos da NBA...</div>
+                    </div>
+                </section>
+
+                <section id="vip-login" class="section-card page-content" style="display: none;">
+                    <h2>🔑 Acesso VIP Exclusivo</h2>
                     <form id="loginForm">
                         <input type="text" id="username" placeholder="Usuário VIP" required>
                         <input type="password" id="password" placeholder="Senha" required>
                         <button type="submit">ENTRAR</button>
                     </form>
                     <p class="erro" id="loginErro" style="display: none;">Usuário ou senha inválidos.</p>
-                    <small style="display: block; margin-top: 15px; color: #aaa;">Não é VIP? Fale conosco para planos de acesso.</small>
                 </section>
 
-                <section id="conteudo-vip" style="display: none;">
+                <section id="vip-content" class="section-card page-content" style="display: none;">
                     <h3>💎 Palpite Premium de Hoje</h3>
                     <p>Jogo Exclusivo: **Liverpool (Vitória) vs. Chelsea**</p>
                     <p>Odd Mínima: **2.15**</p>
-                    <p><small>Análise completa restrita. Validade: 18:00 BRT</small></p>
                     <button class="logout" id="logoutBtn">Sair da Área VIP</button>
                 </section>
                 
             </main>
     
-            <aside class="sidebar">
-                <section class="odd-dia" id="odd-dia">
+            <aside class="sidebar-area">
+                <section class="odd-dia-destaque" id="odd-dia-aside">
                     <h2>ODD DO DIA</h2>
-                    <div class="jogo" id="oddDiaJogo">Carregando...</div>
-                    <div class="odd" id="oddDiaOdd">0.00</div>
-                    <small id="oddDiaDesc">Vitória + Over 2.5</small>
-                </section>
-                
-                <section class="stats-live" id="estatisticas">
-                    <h2>Estatísticas ao Vivo</h2>
-                    <small id="estatisticas-time">Aguardando Jogo...</small> 
-                    <div id="estatisticas-dados">
-                        <div class="stat-item"><span>Status</span> <strong>Sem Dados de API</strong></div>
+                    <div class="odd-info">
+                        <div class="odd-value" id="oddDiaOdd">0.00</div>
+                        <div class="odd-details">
+                            <div class="jogo-nome" id="oddDiaJogo">Carregando...</div>
+                            <div class="jogo-desc" id="oddDiaDesc">Vitória + Over 2.5</div>
+                        </div>
                     </div>
                 </section>
+                
+                <section class="stats-live-card" id="estatisticas-futebol">
+                    <h2>ESTATÍSTICAS AO VIVO</h2>
+                    <div id="estatisticas-dados">
+                        <div class="stat-item"><span>Status do Robô</span> <strong>Offline</strong></div>
+                        <div class="stat-item"><span>Último Sinal</span> <strong>-</strong></div>
+                        <div class="stat-item"><span>Acerto Diário</span> <strong>85%</strong></div>
+                    </div>
+                </section>
+                
             </aside>
         </div>
     </div>
 
     <footer>
-        <p>© 2025 Camillo Bets - Todos os direitos reservados</p>
-        <p>Apostas responsáveis • +18</p>
+        <p>© 2025 Camillo Bets - Apostas responsáveis • +18</p>
     </footer>
 
     <a href="https://wa.me/5547999999999?text=Oi%21%20Quero%20falar%20sobre%20apostas%20no%20Camillo%20Bets%21" target="_blank" class="whatsapp-btn" aria-label="Fale Conosco pelo WhatsApp">
